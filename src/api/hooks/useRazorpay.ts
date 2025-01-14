@@ -32,19 +32,20 @@ interface UseRazorpayReturn {
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
+  success: any;
 }
 
 const RAZORPAY_SCRIPT_URL = "https://checkout.razorpay.com/v1/checkout.js";
 
 const ZINC_THEME = {
-  dark: {
+  light: {
     color: "#71717a", // zinc-500
     backdrop_color: "#18181b", // zinc-900
     text_color: "#fafafa", // zinc-50
   },
-  light: {
+  dark: {
     color: "#3f3f46", // zinc-700
-    backdrop_color: "#fafafa", // zinc-50
+    backdrop_color: "#18181b", // zinc-50
     text_color: "#18181b", // zinc-900
   },
 };
@@ -56,6 +57,7 @@ const isRazorpayLoaded = (): boolean => {
 export const useRazorpay = (): UseRazorpayReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<any>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const { theme } = useThemeStore();
 
@@ -82,22 +84,55 @@ export const useRazorpay = (): UseRazorpayReturn => {
         if (!isScriptLoaded) {
           throw new Error("Razorpay SDK failed to load");
         }
-
+        console.log({
+          url: `${import.meta.env.VITE_API_BASE_URL}/payment-callback`,
+          options,
+        });
         // Initialize Razorpay
         const razorpay = new (window as any).Razorpay({
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          // callback_url: `${import.meta.env.VITE_API_BASE_URL}/payment-callback`,
           ...options,
           theme: {
             ...ZINC_THEME[theme],
             ...options.theme,
           },
-          handler: function (response: PaymentResponse) {
+          handler: async (response: PaymentResponse) => {
             setIsSuccess(true);
             setIsLoading(false);
-            // You can implement additional success callbacks here
             console.log("Payment successful:", response);
+            try {
+              // Verify payment
+              const verifyResponse = await fetch(
+                `${import.meta.env.VITE_API_BASE_URL}/payment-callback`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(response),
+                }
+              );
+
+              if (!verifyResponse.ok) {
+                throw new Error("Payment verification failed");
+              }
+              setSuccess(response);
+            } catch (err) {
+              setSuccess(null);
+              setError(
+                err instanceof Error
+                  ? err.message
+                  : "Payment verification failed"
+              );
+            }
+          },
+
+          modal: {
+            ondismiss: function () {
+              setIsLoading(false);
+            },
           },
         });
+
         const styleElement = document.createElement("style");
         styleElement.textContent = `
           .razorpay-backdrop {
@@ -123,6 +158,15 @@ export const useRazorpay = (): UseRazorpayReturn => {
           console.error("Payment failed:", response.error);
         });
 
+        // Add modal close handler
+        razorpay.on("modal:closed", function () {
+          setIsLoading(false);
+        });
+
+        // razorpay.on("payment.success", function (response: any) {
+        //   setIsLoading(false);
+        // });
+
         // Open Razorpay payment dialog
         razorpay.open();
       } catch (err) {
@@ -130,9 +174,11 @@ export const useRazorpay = (): UseRazorpayReturn => {
           err instanceof Error ? err.message : "An unknown error occurred"
         );
         setIsLoading(false);
+        setSuccess(null);
+        console.log({ err });
       }
     },
-    []
+    [theme] // Added theme to dependencies since we're using it in the callback
   );
 
   return {
@@ -140,5 +186,6 @@ export const useRazorpay = (): UseRazorpayReturn => {
     isLoading,
     error,
     isSuccess,
+    success,
   };
 };

@@ -67,3 +67,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* apply inter font throughout the app */
+@layer components {
+  body {
+    font-family: "Inter", sans-serif;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #2b2a2a;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
