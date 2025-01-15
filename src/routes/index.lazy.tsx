@@ -3,6 +3,7 @@ import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 import PaymentService from "@/api/services/paymentService";
 import GradientBackground from "@/components/atoms/gradient-bg";
 import ChatModal from "@/components/modules/chat-modal";
+import SplineElement from "@/components/modules/spline-element";
 import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import { Button } from "@/components/ui/button";
 import Particles from "@/components/ui/particles";
@@ -76,7 +77,7 @@ function RouteComponent() {
   return (
     <div className="relative min-h-[calc(100dvh-130px)] ">
       <div className="container flex flex-col items-center justify-center space-y-6 py-8 text-center md:py-14">
-        <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-3xl font-medium leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl translate-y-[-1rem] animate-fade-in ">
+        <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text text-3xl font-medium leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl translate-y-[-1rem] animate-fade-in ">
           New AI is the way <br className="hidden md:block" />
           to analyze social data.
         </h1>
@@ -109,6 +110,7 @@ function RouteComponent() {
           refresh
         />
         <GradientBackground className="absolute inset-0 -z-10" />
+        {/* <SplineElement scene="https://prod.spline.design/ByLQLHHsIMDeCxdf/scene.splinecode" /> */}
       </div>
     </div>
   );

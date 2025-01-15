@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import Footer from "../atoms/footer";
 import Navbar from "../atoms/navbar";
+import { Toaster } from "sonner";
 
 const AppLayout = ({ children }: PropsWithChildren) => {
   return (
@@ -8,6 +9,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
       <Navbar />
       {children}
       <Footer />
+      <Toaster />
     </>
   );
 };
