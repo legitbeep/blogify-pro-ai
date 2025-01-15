@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { LiveAudioVisualizer } from "react-audio-visualize";
 
 interface ChatMessage {
   id: string;
@@ -34,10 +35,14 @@ const ChatModal = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
-  const [audioData, setAudioData] = useState<Blob | null>(null);
   const [message, setMessage] = useState("");
-  const [audioPermission, setAudioPermission] = useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const [mediaRecorder, setMediaRecorder] =
+    useState<MediaRecorderWithData | null>(null);
+  const [visualizerStream, setVisualizerStream] = useState<MediaStream | null>(
+    null
+  );
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "1",
@@ -65,7 +70,9 @@ const ChatModal = () => {
 
   const mediaRecorderRef = useRef<MediaRecorderWithData | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerIntervalRef = useRef<number | null>(null);
+  const timerStartTimeRef = useRef<number | null>(null);
+  const pausedTimeRef = useRef<number>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioElementsRef = useRef<{ [key: string]: HTMLAudioElement }>({});
   const streamRef = useRef<MediaStream | null>(null);
@@ -81,12 +88,49 @@ const ChatModal = () => {
   const requestMicrophonePermission = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      setAudioPermission(true);
       return stream;
     } catch (err) {
       console.error("Microphone permission denied:", err);
       return null;
     }
+  };
+
+  const startTimer = () => {
+    if (timerIntervalRef.current) return;
+
+    timerStartTimeRef.current = Date.now() - pausedTimeRef.current * 1000;
+
+    timerIntervalRef.current = window.setInterval(() => {
+      if (timerStartTimeRef.current) {
+        const elapsedTime = Math.floor(
+          (Date.now() - timerStartTimeRef.current) / 1000
+        );
+        setRecordingTime(elapsedTime);
+      }
+    }, 100);
+  };
+
+  const pauseTimer = () => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+
+      if (timerStartTimeRef.current) {
+        pausedTimeRef.current = Math.floor(
+          (Date.now() - timerStartTimeRef.current) / 1000
+        );
+      }
+    }
+  };
+
+  const resetTimer = () => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+    timerStartTimeRef.current = null;
+    pausedTimeRef.current = 0;
+    setRecordingTime(0);
   };
 
   const startRecording = async () => {
@@ -95,12 +139,14 @@ const ChatModal = () => {
 
     streamRef.current = stream;
     audioChunksRef.current = [];
+    setVisualizerStream(stream);
 
     const mediaRecorder = new MediaRecorder(stream, {
       mimeType: "audio/webm;codecs=opus",
     }) as MediaRecorderWithData;
 
     mediaRecorderRef.current = mediaRecorder;
+    setMediaRecorder(mediaRecorder);
 
     mediaRecorder.ondataavailable = (event: BlobEvent) => {
       if (event.data.size > 0) {
@@ -112,7 +158,8 @@ const ChatModal = () => {
       const audioBlob = new Blob(audioChunksRef.current, {
         type: "audio/webm",
       });
-      setAudioData(audioBlob);
+      console.log("first 1a");
+      setVisualizerStream(null);
     };
 
     // Request data every 1 second
@@ -120,22 +167,6 @@ const ChatModal = () => {
     setIsRecording(true);
     setIsPaused(false);
     startTimer();
-  };
-
-  const pauseRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.pause();
-      setIsPaused(true);
-      stopTimer();
-    }
-  };
-
-  const resumeRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.resume();
-      setIsPaused(false);
-      startTimer();
-    }
   };
 
   const cancelRecording = () => {
@@ -147,24 +178,26 @@ const ChatModal = () => {
       }
       setIsRecording(false);
       setIsPaused(false);
-      stopTimer();
-      setRecordingTime(0);
-      setAudioData(null);
+      resetTimer();
       audioChunksRef.current = [];
+      setMediaRecorder(null);
+      setVisualizerStream(null);
     }
   };
 
-  const startTimer = () => {
-    if (!isPaused) {
-      timerRef.current = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-      }, 1000);
+  const pauseRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.pause();
+      setIsPaused(true);
+      pauseTimer();
     }
   };
 
-  const stopTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
+  const resumeRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.resume();
+      setIsPaused(false);
+      startTimer();
     }
   };
 
@@ -194,32 +227,44 @@ const ChatModal = () => {
       }, 1000);
     } else if (isRecording) {
       // Stop the recording and wait for the data
-      mediaRecorderRef.current?.stop();
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        return new Promise((resolve) => {
+          mediaRecorderRef.current!.onstop = async () => {
+            const audioBlob = new Blob(audioChunksRef.current, {
+              type: "audio/webm",
+            });
 
-      // Wait for the ondataavailable and onstop events to process
-      await new Promise((resolve) => setTimeout(resolve, 200));
+            // Create and add the audio message
+            const newMessage: ChatMessage = {
+              id: Date.now().toString(),
+              content: "Audio message",
+              sender: "user",
+              timestamp: new Date(),
+              type: "audio",
+              audioUrl: URL.createObjectURL(audioBlob),
+            };
+            setMessages((prev) => [...prev, newMessage]);
 
-      if (audioData) {
-        const newMessage: ChatMessage = {
-          id: Date.now().toString(),
-          content: "Audio message",
-          sender: "user",
-          timestamp: new Date(),
-          type: "audio",
-          audioUrl: URL.createObjectURL(audioData),
-        };
-        setMessages((prev) => [...prev, newMessage]);
+            // Clean up
+            if (streamRef.current) {
+              streamRef.current.getTracks().forEach((track) => track.stop());
+              streamRef.current = null;
+            }
+            resetTimer();
+            setIsRecording(false);
+            setIsPaused(false);
+            audioChunksRef.current = [];
+            setMediaRecorder(null);
+            setVisualizerStream(null);
 
-        // Cleanup
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach((track) => track.stop());
-          streamRef.current = null;
-        }
-        setAudioData(null);
-        setRecordingTime(0);
-        setIsRecording(false);
-        setIsPaused(false);
-        audioChunksRef.current = [];
+            resolve(undefined);
+          };
+
+          mediaRecorderRef.current!.stop();
+        });
       }
     }
   };
@@ -234,9 +279,10 @@ const ChatModal = () => {
       }
     }
 
-    // Play or pause the selected audio
     if (!audioElementsRef.current[messageId]) {
-      audioElementsRef.current[messageId] = new Audio(audioUrl);
+      const audio = new Audio(audioUrl);
+      audio.onended = () => setCurrentlyPlaying(null);
+      audioElementsRef.current[messageId] = audio;
     }
 
     const audio = audioElementsRef.current[messageId];
@@ -247,18 +293,13 @@ const ChatModal = () => {
     } else {
       audio.play();
       setCurrentlyPlaying(messageId);
-
-      audio.onended = () => {
-        setCurrentlyPlaying(null);
-      };
     }
   };
 
   useEffect(() => {
     return () => {
-      stopTimer();
+      resetTimer();
       cancelRecording();
-      // Cleanup audio elements
       Object.values(audioElementsRef.current).forEach((audio) => {
         audio.pause();
         audio.currentTime = 0;
@@ -267,6 +308,8 @@ const ChatModal = () => {
         streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
       }
+      setVisualizerStream(null);
+      setMediaRecorder(null);
     };
   }, []);
 
@@ -378,6 +421,20 @@ const ChatModal = () => {
                     <span className="text-foreground">
                       {formatTime(recordingTime)}
                     </span>
+                  </div>
+                  <div className="w-full h-full flex justify-center items-center">
+                    {mediaRecorder && visualizerStream && (
+                      <div className="">
+                        <LiveAudioVisualizer
+                          mediaRecorder={mediaRecorder}
+                          width={200}
+                          height={25}
+                          barWidth={2}
+                          gap={1}
+                          barColor={isPaused ? "#666" : "#fff"}
+                        />
+                      </div>
+                    )}
                   </div>
                   <Button
                     type="button"

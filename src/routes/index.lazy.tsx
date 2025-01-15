@@ -1,4 +1,5 @@
 import { useRazorpay } from "@/api/hooks/useRazorpay";
+import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 import PaymentService from "@/api/services/paymentService";
 import GradientBackground from "@/components/atoms/gradient-bg";
 import ChatModal from "@/components/modules/chat-modal";
