@@ -17,6 +17,7 @@ import { LiveAudioVisualizer } from "react-audio-visualize";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { toast } from "sonner";
+import { useThemeStore } from "@/store/useThemeStore";
 
 interface ChatMessage {
   id: string;
@@ -35,6 +36,7 @@ interface MediaRecorderWithData extends MediaRecorder {
 }
 
 const ChatModal = () => {
+  const { theme } = useThemeStore();
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -376,7 +378,7 @@ const ChatModal = () => {
   return (
     <Dialog>
       <DialogTrigger>
-        <Button size="lg" variant="outline" className="h-11">
+        <Button size="lg" variant="secondary" className="h-11 w-full">
           Explore AI
         </Button>
       </DialogTrigger>
@@ -483,7 +485,15 @@ const ChatModal = () => {
                           height={25}
                           barWidth={2}
                           gap={1}
-                          barColor={isPaused ? "#666" : "#fff"}
+                          barColor={
+                            theme == "dark"
+                              ? isPaused
+                                ? "#666"
+                                : "#fff"
+                              : isPaused
+                                ? "#fff"
+                                : "#666"
+                          }
                         />
                       </div>
                     )}

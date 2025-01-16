@@ -29,12 +29,8 @@ export function MobileMenu() {
             className="text-xl font-bold"
             onClick={() => setOpen(false)}
           >
-            Magic UI
+            New AI
           </Link>
-          <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
-            <X className="h-6 w-6" />
-            <span className="sr-only">Close menu</span>
-          </Button>
         </div>
         <nav className="flex flex-col space-y-4">
           {links.map((link) => (

@@ -33,7 +33,14 @@
 
 // export default SplineScene;
 import { Suspense, lazy } from "react";
-const Spline = lazy(() => import("@splinetool/react-spline"));
+// const Spline = lazy(() => import("@splinetool/react-spline"));
+// const Spline = lazy(() =>
+//   import("@splinetool/react-spline").then((module: any) => ({
+//     default: module.Spline,
+//   }))
+// );
+// const Spline = lazy(() => import("../atoms/spline-wrapper"));
+import Spline from "@splinetool/react-spline";
 
 interface SplineSceneProps {
   scene: string;
