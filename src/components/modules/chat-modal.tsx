@@ -227,6 +227,7 @@ const ChatModal = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (message.trim()) {
       const newMessage: ChatMessage = {
         id: Date.now().toString(),
@@ -292,10 +293,6 @@ const ChatModal = () => {
       }
     }
   };
-
-  console.log({
-    transcriptDone,
-  });
 
   useEffect(() => {
     if (transcriptDone) {

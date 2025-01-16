@@ -5,12 +5,12 @@ import { Toaster } from "sonner";
 
 const AppLayout = ({ children }: PropsWithChildren) => {
   return (
-    <>
+    <div className="min-h-screen min-w-screen">
       <Navbar />
       {children}
       <Footer />
       <Toaster />
-    </>
+    </div>
   );
 };
 

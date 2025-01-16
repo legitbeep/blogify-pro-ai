@@ -1,14 +1,13 @@
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { Check, Star } from "lucide-react";
-import { useState, useRef } from "react";
-import confetti from "canvas-confetti";
+import { cn, login } from "@/lib/utils";
 import NumberFlow from "@number-flow/react";
-import { Link } from "@tanstack/react-router";
+import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
+import { Check, Loader2, Star } from "lucide-react";
+import { useRef, useState } from "react";
 
 interface PricingPlan {
   name: string;
@@ -18,8 +17,10 @@ interface PricingPlan {
   features: string[];
   description: string;
   buttonText: string;
-  href: string;
   isPopular: boolean;
+  onClick: (isMonthly: boolean) => void;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 interface PricingProps {
@@ -143,30 +144,39 @@ export function Pricing({
               </p>
               <div className="mt-6 flex items-center justify-center gap-x-2">
                 <span className="text-5xl font-bold tracking-tight text-foreground">
-                  <NumberFlow
-                    value={
-                      isMonthly ? Number(plan.price) : Number(plan.yearlyPrice)
-                    }
-                    format={{
-                      style: "currency",
-                      currency: "USD",
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    }}
-                    // formatter={(value: any) => `Rs ${value}`}
-                    transformTiming={{
-                      duration: 500,
-                      easing: "ease-out",
-                    }}
-                    willChange
-                    className="font-variant-numeric: tabular-nums"
-                  />
+                  {!isNaN(Number(plan.price)) ? (
+                    <NumberFlow
+                      value={
+                        isMonthly
+                          ? Number(plan.price)
+                          : Number(plan.yearlyPrice)
+                      }
+                      format={{
+                        style: "currency",
+                        currency: "INR",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }}
+                      // formatter={(value: any) => `Rs ${value}`}
+                      transformTiming={{
+                        duration: 500,
+                        easing: "ease-out",
+                      }}
+                      willChange
+                      className="font-variant-numeric: tabular-nums"
+                    />
+                  ) : (
+                    plan.price
+                  )}
                 </span>
-                {plan.period !== "Next 3 months" && (
+                {/* {plan.period !== "Next 3 months" && (
                   <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
                     / {plan.period}
                   </span>
-                )}
+                )} */}
+                <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
+                  / {isMonthly ? "month" : "year"}
+                </span>
               </div>
 
               <p className="text-xs leading-5 text-muted-foreground">
@@ -184,8 +194,8 @@ export function Pricing({
 
               <hr className="w-full my-4" />
 
-              <Link
-                to={plan?.href}
+              <Button
+                onClick={() => plan.onClick(isMonthly)}
                 className={cn(
                   buttonVariants({
                     variant: "outline",
@@ -196,9 +206,16 @@ export function Pricing({
                     ? "bg-primary text-primary-foreground"
                     : "bg-background text-foreground"
                 )}
+                disabled={plan.disabled || plan?.loading}
               >
-                {plan.buttonText}
-              </Link>
+                {plan.loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </span>
+                ) : (
+                  plan.buttonText
+                )}
+              </Button>
               <p className="mt-6 text-xs leading-5 text-muted-foreground">
                 {plan.description}
               </p>
@@ -209,3 +226,5 @@ export function Pricing({
     </div>
   );
 }
+
+export default Pricing;

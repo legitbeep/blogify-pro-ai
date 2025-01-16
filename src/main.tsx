@@ -31,7 +31,6 @@ declare module "@tanstack/react-router" {
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
-  console.log({ PUBLISHABLE_KEY, vars: import.meta.env });
   throw new Error("Missing Publishable Key");
 }
 

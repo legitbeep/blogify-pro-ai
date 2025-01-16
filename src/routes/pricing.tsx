@@ -1,75 +1,127 @@
+import { useRazorpay } from "@/api/hooks/useRazorpay";
+import PaymentService from "@/api/services/paymentService";
 import { Pricing } from "@/components/modules/pricing/pricing";
+import { login } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pricing")({
   component: RouteComponent,
 });
 
-const demoPlans = [
-  {
-    name: "STARTER",
-    price: "50",
-    yearlyPrice: "40",
-    period: "per month",
-    features: [
-      "Up to 10 projects",
-      "Basic analytics",
-      "48-hour support response time",
-      "Limited API access",
-      "Community support",
-    ],
-    description: "Perfect for individuals and small projects",
-    buttonText: "Start Free Trial",
-    href: "/sign-up",
-    isPopular: false,
-  },
-  {
-    name: "PROFESSIONAL",
-    price: "99",
-    yearlyPrice: "79",
-    period: "per month",
-    features: [
-      "Unlimited projects",
-      "Advanced analytics",
-      "24-hour support response time",
-      "Full API access",
-      "Priority support",
-      "Team collaboration",
-      "Custom integrations",
-    ],
-    description: "Ideal for growing teams and businesses",
-    buttonText: "Get Started",
-    href: "/sign-up",
-    isPopular: true,
-  },
-  {
-    name: "ENTERPRISE",
-    price: "299",
-    yearlyPrice: "239",
-    period: "per month",
-    features: [
-      "Everything in Professional",
-      "Custom solutions",
-      "Dedicated account manager",
-      "1-hour support response time",
-      "SSO Authentication",
-      "Advanced security",
-      "Custom contracts",
-      "SLA agreement",
-    ],
-    description: "For large organizations with specific needs",
-    buttonText: "Contact Sales",
-    href: "https://calendly.com/superlevelhackathon/30min",
-    isPopular: false,
-  },
-];
-
 function RouteComponent() {
+  const isLoggedIn = true;
+  const razorpayObj = useRazorpay();
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const onFreePlanClick = () => {
+    if (isLoggedIn) {
+      toast.message("Already activated!");
+    } else {
+      login();
+    }
+  };
+
+  const onProPlanClick = async (isMonthly: boolean) => {
+    setPaymentLoading(true);
+    try {
+      const user = {
+        name: "John Doe",
+        email: "johndoe@gmail.com",
+      };
+      const res = await PaymentService.createOrder({
+        amount: isMonthly ? 999 : 9999,
+        customer_details: user,
+      });
+      if (res?.status !== "created") {
+        toast.error("Order creation failed");
+        throw new Error("Order creation failed");
+      }
+      razorpayObj.initiatePayment({
+        amount: res.amount,
+        currency: res.currency,
+        name: `Pro plan ${isMonthly ? "monthly" : "yearly"}`,
+        description: "",
+        notes: {
+          orderId: res?.orderId ?? "",
+        },
+        order_id: res.id,
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong!");
+    }
+    setPaymentLoading(false);
+  };
+
+  const onEnterprisePlanClick = () => {
+    window.open("_blank", "https://calendly.com/superlevelhackathon/30min");
+  };
+
+  const demoPlans = [
+    {
+      name: "Free Trial",
+      price: "0",
+      yearlyPrice: "00",
+      period: "per month",
+      features: [
+        "Up to 10 projects",
+        "Basic analytics",
+        "48-hour support response time",
+      ],
+      description: "Perfect for individuals and small projects",
+      buttonText: isLoggedIn ? "Your current plan" : "Start Free Trial",
+      isPopular: false,
+      onClick: onFreePlanClick,
+      disabled: isLoggedIn,
+    },
+    {
+      name: "Pro Tier",
+      price: "999",
+      yearlyPrice: "9999",
+      period: "per month",
+      features: [
+        "Unlimited projects",
+        "Advanced analytics",
+        "24-hour support response time",
+        "Full API access",
+        "Priority support",
+        "Team collaboration",
+        "Custom integrations",
+      ],
+      description: "Ideal for growing teams and businesses",
+      buttonText: "Get Started",
+      isPopular: true,
+      onClick: onProPlanClick,
+      loading: paymentLoading || razorpayObj.isLoading,
+    },
+    {
+      name: "Enterprise",
+      price: "NA",
+      yearlyPrice: "NA",
+      period: "per month",
+      features: [
+        "Everything in Professional",
+        "Custom solutions",
+        "Dedicated account manager",
+        "1-hour support response time",
+        "SSO Authentication",
+        "Advanced security",
+        "Custom contracts",
+        "SLA agreement",
+      ],
+      description: "For large organizations with specific needs",
+      buttonText: "Contact Sales",
+      isPopular: false,
+      onClick: onEnterprisePlanClick,
+    },
+  ];
   return (
-    <div className="min-h-[800px] rounded-lg">
+    <div className="min-h-[800px] rounded-lg px-4">
       <Pricing
         plans={demoPlans}
-        title="Simple, Transparent Pricing"
+        title="New AI Simple, Transparent Pricing"
         description="Choose the plan that works for you\nAll plans include access to our platform, lead generation tools, and dedicated support."
       />
     </div>

@@ -62,9 +62,6 @@ function RouteComponent() {
           orderId: res?.orderId ?? "",
         },
         order_id: res.id,
-        theme: {
-          color,
-        },
       });
     } catch (err) {
       console.error(err);
@@ -73,7 +70,7 @@ function RouteComponent() {
   };
 
   return (
-    <AuroraBackground>
+    <AuroraBackground className="min-h-[100dvh]">
       <div className="relative min-h-[100dvh] w-full overflow-x-hidden px-4 flex flex-col ">
         <div className="container flex-grow flex flex-col md:flex-row items-start justify-between py-8 md:py-14">
           <div className="w-full md:w-1/2 order-2 md:order-1 mt-auto md:mt-0">

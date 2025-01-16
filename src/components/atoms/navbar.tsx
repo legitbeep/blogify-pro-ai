@@ -1,5 +1,3 @@
-"use client";
-
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
 import { Button } from "@/components/ui/button";
