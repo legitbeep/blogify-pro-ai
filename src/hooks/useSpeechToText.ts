@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 // Add type declarations for the Web Speech API
-interface Window {
-  webkitSpeechRecognition: any;
-  SpeechRecognition: any;
-}
+// interface Window {
+//   webkitSpeechRecognition: any;
+//   SpeechRecognition: any;
+// }
 
 declare global {
   interface Window {

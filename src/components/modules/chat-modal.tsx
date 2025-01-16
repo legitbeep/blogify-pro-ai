@@ -2,16 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Mic,
-  Send,
-  Pause,
-  Calendar,
-  Paperclip,
-  Globe,
-  Play,
-  X,
-} from "lucide-react";
+import { Mic, Send, Pause, Paperclip, Play, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { LiveAudioVisualizer } from "react-audio-visualize";
 import useSpeechToText from "@/hooks/useSpeechToText";

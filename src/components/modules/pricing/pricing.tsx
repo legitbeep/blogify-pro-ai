@@ -185,7 +185,7 @@ export function Pricing({
               <hr className="w-full my-4" />
 
               <Link
-                to={"/"}
+                to={plan?.href}
                 className={cn(
                   buttonVariants({
                     variant: "outline",

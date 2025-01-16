@@ -1,19 +1,14 @@
 "use client";
 
 import { useRazorpay } from "@/api/hooks/useRazorpay";
-import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 import PaymentService from "@/api/services/paymentService";
-import GradientBackground from "@/components/atoms/gradient-bg";
 import ChatModal from "@/components/modules/chat-modal";
-import SplineElement from "@/components/modules/spline-element";
-import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
 import Particles from "@/components/ui/particles";
-import { cn } from "@/lib/utils";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { ArrowRightIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 export const Route = createLazyFileRoute("/")({
@@ -39,9 +34,8 @@ const DUMMY_PAYMENT = {
 function RouteComponent() {
   const { theme } = useThemeStore();
   const [color, setColor] = React.useState(theme === "light" ? "#000" : "#fff");
-  const [showChat, setShowChat] = React.useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
-  const { success, error, initiatePayment, isLoading } = useRazorpay();
+  const { initiatePayment, isLoading } = useRazorpay();
 
   useEffect(() => {
     setColor(theme === "light" ? "#000" : "#fff");

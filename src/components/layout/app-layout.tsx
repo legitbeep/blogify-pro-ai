@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
 import Footer from "../atoms/footer";
 import Navbar from "../atoms/navbar";
 import { Toaster } from "sonner";
