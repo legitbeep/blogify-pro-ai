@@ -54,9 +54,11 @@ api.interceptors.response.use(
       // Handle different error status codes
       switch (response.status) {
         case 401:
-          // Handle unauthorized
-          localStorage.removeItem("token");
-          window.location.href = "/login";
+          if (window.location.pathname != "/login") {
+            // Handle unauthorized
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }
           break;
         case 403:
           // Handle forbidden
