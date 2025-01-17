@@ -3,17 +3,25 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { login } from "@/lib/utils";
+import { deleteCookie, login } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import AuthService from "@/api/services/authService";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const userQuery = useQuery({
+    queryKey: AuthService.queryKeys.getUser(),
+    queryFn: AuthService.getUser,
+    staleTime: Infinity,
+  });
 
-  const links = [
-    { label: "PRICING" },
-    { label: "LOGIN" },
-    { label: "GET STARTED" },
-  ];
+  let links = [{ label: "PRICING" }, { label: "GET STARTED" }];
+
+  if (!!userQuery?.data) {
+    links = links.filter((link) => link.label !== "GET STARTED");
+    links = [...links, { label: "PROFILE" }, { label: "LOGOUT" }];
+  }
 
   const onLinkClick = (link: (typeof links)[number]) => {
     switch (link.label) {
@@ -22,13 +30,17 @@ export function MobileMenu() {
           to: "/pricing",
         });
         break;
-      case "LOGIN":
+      case "GET STARTED":
         login();
         break;
-      case "GET STARTED":
+      case "PROFILE":
         navigate({
-          to: "/",
+          to: "/dashboard/profile",
         });
+        break;
+      case "LOGOUT":
+        deleteCookie("authToken");
+        window.location.href = "/";
         break;
     }
     setOpen(false);
@@ -57,7 +69,7 @@ export function MobileMenu() {
             <button
               key={link.label}
               onClick={() => onLinkClick(link)}
-              className="bg-transparent border-none text-left text-2xl py-2 hover:text-primary transition-colors"
+              className="bg-transparent border-none text-left text-2xl py-2 hover:text-primary transition-colors max-w-full text-ellipsis overflow-hidden"
             >
               {link.label}
             </button>

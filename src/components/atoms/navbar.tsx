@@ -1,11 +1,10 @@
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import NotificationButton from "../modules/notification/notification-button";
 import { MobileMenu } from "./mobile-menu";
 import SigninButton from "./signin-button";
 import { ThemeToggle } from "./theme-toggle";
+import ProfileIcon from "./profile-icon";
 
 export function Navbar() {
   // const [isNewMessage, setIsNewMessage] = useState(false);
@@ -35,7 +34,7 @@ export function Navbar() {
           : "bg-transparent"
       )}
     >
-      <div className="container flex h-14 max-w-screen-2xl items-center md:px-10 px-6">
+      <div className="flex h-14 items-center md:px-10 px-6">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-xl ">New AI</span>
@@ -71,11 +70,8 @@ export function Navbar() {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             {/* create web only visible div with flex items center spaxe-x-4 */}
-            <div className="hidden md:flex items-center space-x-4">
-              <SigninButton>Login</SigninButton>
-              <Button variant="outline" className="text-sm">
-                Get Started
-              </Button>
+            <div className="hidden md:block">
+              <ProfileIcon size="sm" />
             </div>
             <MobileMenu />
           </div>

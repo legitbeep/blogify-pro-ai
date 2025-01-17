@@ -1,4 +1,4 @@
-import { getTokenFromCookie } from "@/lib/utils";
+import { deleteCookie, getTokenFromCookie } from "@/lib/utils";
 import axios, {
   AxiosError,
   AxiosResponse,
@@ -30,7 +30,7 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getTokenFromCookie();
+    const token = getTokenFromCookie("authToken");
     console.log({ token });
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -54,10 +54,10 @@ api.interceptors.response.use(
       // Handle different error status codes
       switch (response.status) {
         case 401:
-          if (window.location.pathname != "/login") {
+          if (window.location.pathname != "/") {
             // Handle unauthorized
-            localStorage.removeItem("token");
-            window.location.href = "/login";
+            deleteCookie("authToken");
+            window.location.href = "/";
           }
           break;
         case 403:

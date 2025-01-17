@@ -4,6 +4,7 @@ import PaymentService from "@/api/services/paymentService";
 // import GradientBackground from "@/components/atoms/gradient-bg";
 // import NotificationComponent from "@/components/atoms/notification";
 import ChatModal from "@/components/modules/chat-modal";
+import { PurchaseDialogDemo } from "@/components/modules/pricing/pricing-modal";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
 // import { DefaultAreaChart } from "@/components/ui/graphs/area-graph/default";
@@ -194,6 +195,7 @@ function RouteComponent() {
                   )}
                 </Button>
                 <ChatModal />
+                <PurchaseDialogDemo />
               </div>
             </div>
           </div>
