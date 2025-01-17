@@ -8,106 +8,158 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as PricingImport } from './routes/pricing'
-import { Route as DashboardIndexImport } from './routes/dashboard/index'
-
-// Create Virtual Routes
-
-const IndexLazyImport = createFileRoute('/')()
+import { Route as UnauthImport } from './routes/_unauth'
+import { Route as AuthImport } from './routes/_auth'
+import { Route as UnauthIndexImport } from './routes/_unauth/index'
+import { Route as UnauthPricingImport } from './routes/_unauth/pricing'
+import { Route as AuthDashboardIndexImport } from './routes/_auth/dashboard/index'
 
 // Create/Update Routes
 
-const PricingRoute = PricingImport.update({
-  id: '/pricing',
-  path: '/pricing',
+const UnauthRoute = UnauthImport.update({
+  id: '/_unauth',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const AuthRoute = AuthImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const UnauthIndexRoute = UnauthIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+  getParentRoute: () => UnauthRoute,
+} as any)
 
-const DashboardIndexRoute = DashboardIndexImport.update({
+const UnauthPricingRoute = UnauthPricingImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => UnauthRoute,
+} as any)
+
+const AuthDashboardIndexRoute = AuthDashboardIndexImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
-    '/pricing': {
-      id: '/pricing'
+    '/_unauth': {
+      id: '/_unauth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof UnauthImport
+      parentRoute: typeof rootRoute
+    }
+    '/_unauth/pricing': {
+      id: '/_unauth/pricing'
       path: '/pricing'
       fullPath: '/pricing'
-      preLoaderRoute: typeof PricingImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof UnauthPricingImport
+      parentRoute: typeof UnauthImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
+    '/_unauth/': {
+      id: '/_unauth/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof UnauthIndexImport
+      parentRoute: typeof UnauthImport
+    }
+    '/_auth/dashboard/': {
+      id: '/_auth/dashboard/'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthDashboardIndexImport
+      parentRoute: typeof AuthImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AuthRouteChildren {
+  AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthDashboardIndexRoute: AuthDashboardIndexRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+interface UnauthRouteChildren {
+  UnauthPricingRoute: typeof UnauthPricingRoute
+  UnauthIndexRoute: typeof UnauthIndexRoute
+}
+
+const UnauthRouteChildren: UnauthRouteChildren = {
+  UnauthPricingRoute: UnauthPricingRoute,
+  UnauthIndexRoute: UnauthIndexRoute,
+}
+
+const UnauthRouteWithChildren =
+  UnauthRoute._addFileChildren(UnauthRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/pricing': typeof PricingRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '': typeof UnauthRouteWithChildren
+  '/pricing': typeof UnauthPricingRoute
+  '/': typeof UnauthIndexRoute
+  '/dashboard': typeof AuthDashboardIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/pricing': typeof PricingRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '': typeof AuthRouteWithChildren
+  '/pricing': typeof UnauthPricingRoute
+  '/': typeof UnauthIndexRoute
+  '/dashboard': typeof AuthDashboardIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
-  '/pricing': typeof PricingRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/_unauth': typeof UnauthRouteWithChildren
+  '/_unauth/pricing': typeof UnauthPricingRoute
+  '/_unauth/': typeof UnauthIndexRoute
+  '/_auth/dashboard/': typeof AuthDashboardIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/pricing' | '/dashboard'
+  fullPaths: '' | '/pricing' | '/' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pricing' | '/dashboard'
-  id: '__root__' | '/' | '/pricing' | '/dashboard/'
+  to: '' | '/pricing' | '/' | '/dashboard'
+  id:
+    | '__root__'
+    | '/_auth'
+    | '/_unauth'
+    | '/_unauth/pricing'
+    | '/_unauth/'
+    | '/_auth/dashboard/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
-  PricingRoute: typeof PricingRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  UnauthRoute: typeof UnauthRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
-  PricingRoute: PricingRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
+  AuthRoute: AuthRouteWithChildren,
+  UnauthRoute: UnauthRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -120,19 +172,34 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/pricing",
-        "/dashboard/"
+        "/_auth",
+        "/_unauth"
       ]
     },
-    "/": {
-      "filePath": "index.lazy.tsx"
+    "/_auth": {
+      "filePath": "_auth.tsx",
+      "children": [
+        "/_auth/dashboard/"
+      ]
     },
-    "/pricing": {
-      "filePath": "pricing.tsx"
+    "/_unauth": {
+      "filePath": "_unauth.tsx",
+      "children": [
+        "/_unauth/pricing",
+        "/_unauth/"
+      ]
     },
-    "/dashboard/": {
-      "filePath": "dashboard/index.tsx"
+    "/_unauth/pricing": {
+      "filePath": "_unauth/pricing.tsx",
+      "parent": "/_unauth"
+    },
+    "/_unauth/": {
+      "filePath": "_unauth/index.tsx",
+      "parent": "/_unauth"
+    },
+    "/_auth/dashboard/": {
+      "filePath": "_auth/dashboard/index.tsx",
+      "parent": "/_auth"
     }
   }
 }

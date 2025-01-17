@@ -14,11 +14,11 @@ import { Button } from "@/components/ui/button";
 // import { DefaultRadialGraph } from "@/components/ui/graphs/radial-graph/default";
 import Particles from "@/components/ui/particles";
 import { useThemeStore } from "@/store/useThemeStore";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-export const Route = createLazyFileRoute("/")({
+export const Route = createFileRoute("/_unauth/")({
   component: RouteComponent,
 });
 
@@ -168,7 +168,7 @@ function RouteComponent() {
   return (
     <AuroraBackground className="min-h-[100dvh]">
       <div className="relative min-h-[100dvh] w-full overflow-x-hidden px-4 flex flex-col ">
-        <div className="container flex-grow flex flex-col md:flex-row items-start justify-between py-8 md:py-14">
+        <div className="container w-full flex-grow flex flex-col md:flex-row items-start justify-between py-8 md:py-14">
           <div className="w-full md:w-1/2 order-2 md:order-1 mt-auto md:mt-0">
             <div className="text-center md:text-left space-y-6 md:absolute md:bottom-14 md:left-14">
               <h1 className="bg-gradient-to-br text-transparent dark:from-white from-black/80 from-30% dark:to-black/10 to-black/100 bg-clip-text text-3xl font-bold leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl animate-fade-in">

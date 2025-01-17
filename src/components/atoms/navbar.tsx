@@ -1,23 +1,15 @@
-// import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
-
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import { MobileMenu } from "./mobile-menu";
-import { ThemeToggle } from "./theme-toggle";
-import SigninButton from "./signin-button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Bell, BellDot } from "lucide-react";
-import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import NotificationButton from "../modules/notification/notification-button";
+import { MobileMenu } from "./mobile-menu";
+import SigninButton from "./signin-button";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Navbar() {
   // const [isNewMessage, setIsNewMessage] = useState(false);
-  let isNewMessage = false;
-  const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,7 +35,7 @@ export function Navbar() {
           : "bg-transparent"
       )}
     >
-      <div className="container flex h-14 max-w-screen-2xl items-center md:px-10 px-6 mx-auto">
+      <div className="container flex h-14 max-w-screen-2xl items-center md:px-10 px-6">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-xl ">New AI</span>
@@ -78,21 +70,9 @@ export function Navbar() {
 
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <Popover>
-              <PopoverTrigger className="">
-                {isNewMessage ? (
-                  <BellDot className="w-9 h-9 p-2 text-red-500 hover:bg-accent  rounded-full" />
-                ) : (
-                  <Bell className="w-9 h-9 p-2  hover:bg-accent hover:text-accent-foreground rounded-full" />
-                )}
-              </PopoverTrigger>
-              <PopoverContent>
-                Place content for the popover here.
-              </PopoverContent>
-            </Popover>
+            {/* create web only visible div with flex items center spaxe-x-4 */}
             <div className="hidden md:flex items-center space-x-4">
               <SigninButton>Login</SigninButton>
-
               <Button variant="outline" className="text-sm">
                 Get Started
               </Button>
