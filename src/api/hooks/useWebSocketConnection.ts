@@ -5,14 +5,14 @@ interface UseWebSocketDemoReturn {
   socketUrl: string;
   messageHistory: MessageEvent[];
   changeSocketUrl: (newUrl: string) => void;
-  sendTestMessage: () => void;
+  sendTestMessage: (text: string | object) => void;
   connectionStatus: string;
   lastMessage: MessageEvent | null;
   readyState: ReadyState;
 }
 
 const useWebSocketDemo = (
-  initialUrl: string = "wss://echo.websocket.org"
+  initialUrl: string = "wss://5851-106-219-169-36.ngrok-free.app/"
 ): UseWebSocketDemoReturn => {
   const [socketUrl, setSocketUrl] = useState<string>(initialUrl);
   const [messageHistory, setMessageHistory] = useState<MessageEvent[]>([]);
@@ -31,7 +31,10 @@ const useWebSocketDemo = (
   );
 
   const sendTestMessage = useCallback(
-    () => sendMessage("Hello"),
+    (data: string | object) => {
+      const message = typeof data === "object" ? JSON.stringify(data) : data;
+      sendMessage(message);
+    },
     [sendMessage]
   );
 

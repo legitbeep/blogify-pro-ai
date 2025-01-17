@@ -1,5 +1,3 @@
-"use client";
-
 import {
   SignedIn,
   SignedOut,
@@ -12,8 +10,17 @@ import { Link } from "@tanstack/react-router";
 import { MobileMenu } from "./mobile-menu";
 import { ThemeToggle } from "./theme-toggle";
 import SigninButton from "./signin-button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Bell, BellDot } from "lucide-react";
+import { useState } from "react";
 
 export function Navbar() {
+  const [isNewMessage, setIsNewMessage] = useState(false);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-10 px-6">
       <div className="container flex h-14 max-w-screen-2xl items-center">
@@ -51,6 +58,19 @@ export function Navbar() {
 
           <div className="flex items-center space-x-4">
             <ThemeToggle />
+            <Popover>
+              <PopoverTrigger className="">
+                {isNewMessage ? (
+                  <BellDot className="w-9 h-9 p-2 text-red-500 hover:bg-accent  rounded-full" />
+                ) : (
+                  <Bell className="w-9 h-9 p-2  hover:bg-accent hover:text-accent-foreground rounded-full" />
+                )}
+              </PopoverTrigger>
+              <PopoverContent>
+                Place content for the popover here.
+              </PopoverContent>
+            </Popover>
+
             <SignedOut>
               <SigninButton>Login</SigninButton>
             </SignedOut>

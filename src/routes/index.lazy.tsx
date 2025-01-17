@@ -2,14 +2,19 @@ import { useRazorpay } from "@/api/hooks/useRazorpay";
 import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 import PaymentService from "@/api/services/paymentService";
 import GradientBackground from "@/components/atoms/gradient-bg";
+import NotificationComponent from "@/components/atoms/notification";
 import ChatModal from "@/components/modules/chat-modal";
-import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import { Button } from "@/components/ui/button";
+import { DefaultAreaChart } from "@/components/ui/graphs/area-graph/default";
+import { DefaultBarGraph } from "@/components/ui/graphs/bar-graph/default";
+import { DefaultLineGraph } from "@/components/ui/graphs/line-graph/default";
+import { DefaultPieGraph } from "@/components/ui/graphs/pie-graph/default";
+import { DefaultRadarGraph } from "@/components/ui/graphs/radar-graph/default";
+import { DefaultRadialGraph } from "@/components/ui/graphs/radial-graph/default";
 import Particles from "@/components/ui/particles";
-import { cn } from "@/lib/utils";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { ArrowRightIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 export const Route = createLazyFileRoute("/")({
@@ -73,43 +78,94 @@ function RouteComponent() {
     setOrderLoading(false);
   };
 
-  return (
-    <div className="relative min-h-[calc(100dvh-130px)] ">
-      <div className="container flex flex-col items-center justify-center space-y-6 py-8 text-center md:py-14">
-        <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-3xl font-medium leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl translate-y-[-1rem] animate-fade-in ">
-          New AI is the way <br className="hidden md:block" />
-          to analyze social data.
-        </h1>
-        <p className="mx-auto max-w-[700px] text-lg text-muted-foreground sm:text-xl mt-0">
-          Access an ever-growing collection of premium, meticulously crafted
-          templates and component packs. Save time and focus on what
-          matters—building standout websites that captivate your audience.
-        </p>
-        <div className="flex flex-col gap-4 min-[400px]:flex-row">
-          <Button
-            disabled={isLoading || orderLoading}
-            size="lg"
-            className="h-11"
-            onClick={handlePayment}
-          >
-            {isLoading || orderLoading ? (
-              <Loader2 className="h-3 w-3 animate-spin" />
-            ) : (
-              "Random Payment"
-            )}
-          </Button>
+  const {
+    socketUrl,
+    messageHistory,
+    changeSocketUrl,
+    sendTestMessage,
+    connectionStatus,
+    lastMessage,
+  } = useWebSocketDemo();
 
-          <ChatModal />
+  return (
+    <>
+      <NotificationComponent />
+
+      <div className="relative min-h-[calc(100dvh-130px)] ">
+        <div className="container flex flex-col items-center justify-center space-y-6 py-8 text-center md:py-14">
+          <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-3xl font-medium leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl translate-y-[-1rem] animate-fade-in ">
+            New AI is the way <br className="hidden md:block" />
+            to analyze social data.
+          </h1>
+          <p className="mx-auto max-w-[700px] text-lg text-muted-foreground sm:text-xl mt-0">
+            Access an ever-growing collection of premium, meticulously crafted
+            templates and component packs. Save time and focus on what
+            matters—building standout websites that captivate your audience.
+          </p>
+          <div className="flex flex-col gap-4 min-[400px]:flex-row">
+            <Button
+              disabled={isLoading || orderLoading}
+              size="lg"
+              className="h-11"
+              onClick={handlePayment}
+            >
+              {isLoading || orderLoading ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                "Random Payment"
+              )}
+            </Button>
+
+            <ChatModal />
+          </div>
+          <Particles
+            className="absolute inset-0 z-0"
+            quantity={20}
+            ease={80}
+            color={color}
+            refresh
+          />
+          <GradientBackground className="absolute inset-0 -z-10" />
         </div>
-        <Particles
-          className="absolute inset-0 z-0"
-          quantity={20}
-          ease={80}
-          color={color}
-          refresh
-        />
-        <GradientBackground className="absolute inset-0 -z-10" />
+
+        {/* JUST FOR SAMPLE PURPOSE TO SHOW THAT THIS IS INTEGRATED */}
+        <DefaultAreaChart />
+        <DefaultBarGraph />
+        <DefaultLineGraph />
+        <DefaultPieGraph />
+        <DefaultRadarGraph />
+        <DefaultRadialGraph />
+        <div>
+          <h3>WebSocket Demo</h3>
+          <button
+            onClick={() => changeSocketUrl("wss://demos.kaazing.com/echo")}
+          >
+            Change Socket URL
+          </button>
+          <button
+            onClick={() =>
+              sendTestMessage({
+                user_id: "999",
+                message_type: "Image",
+                content: "Test Content",
+              })
+            }
+            disabled={connectionStatus !== "Open"}
+          >
+            Send JSON Message
+          </button>
+          <div>
+            <p>Current WebSocket URL: {socketUrl}</p>
+            <p>Status: {connectionStatus}</p>
+            {lastMessage && <p>Last message: {lastMessage.data}</p>}
+            <ul>
+              {messageHistory.map((msg, idx) => (
+                <li key={idx}>{msg?.data}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
