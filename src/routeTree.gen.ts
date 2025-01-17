@@ -17,6 +17,7 @@ import { Route as UnauthIndexImport } from './routes/_unauth/index'
 import { Route as UnauthPricingImport } from './routes/_unauth/pricing'
 import { Route as AuthDashboardIndexImport } from './routes/_auth/dashboard/index'
 import { Route as AuthDashboardProfileImport } from './routes/_auth/dashboard/profile'
+import { Route as AuthDashboardAnalyticsImport } from './routes/_auth/dashboard/analytics'
 
 // Create/Update Routes
 
@@ -54,6 +55,12 @@ const AuthDashboardProfileRoute = AuthDashboardProfileImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const AuthDashboardAnalyticsRoute = AuthDashboardAnalyticsImport.update({
+  id: '/dashboard/analytics',
+  path: '/dashboard/analytics',
+  getParentRoute: () => AuthRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -86,6 +93,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnauthIndexImport
       parentRoute: typeof UnauthImport
     }
+    '/_auth/dashboard/analytics': {
+      id: '/_auth/dashboard/analytics'
+      path: '/dashboard/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof AuthDashboardAnalyticsImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/dashboard/profile': {
       id: '/_auth/dashboard/profile'
       path: '/dashboard/profile'
@@ -106,11 +120,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthRouteChildren {
+  AuthDashboardAnalyticsRoute: typeof AuthDashboardAnalyticsRoute
   AuthDashboardProfileRoute: typeof AuthDashboardProfileRoute
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthDashboardAnalyticsRoute: AuthDashboardAnalyticsRoute,
   AuthDashboardProfileRoute: AuthDashboardProfileRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
 }
@@ -134,6 +150,7 @@ export interface FileRoutesByFullPath {
   '': typeof UnauthRouteWithChildren
   '/pricing': typeof UnauthPricingRoute
   '/': typeof UnauthIndexRoute
+  '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
 }
@@ -142,6 +159,7 @@ export interface FileRoutesByTo {
   '': typeof AuthRouteWithChildren
   '/pricing': typeof UnauthPricingRoute
   '/': typeof UnauthIndexRoute
+  '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
 }
@@ -152,21 +170,35 @@ export interface FileRoutesById {
   '/_unauth': typeof UnauthRouteWithChildren
   '/_unauth/pricing': typeof UnauthPricingRoute
   '/_unauth/': typeof UnauthIndexRoute
+  '/_auth/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
   '/_auth/dashboard/profile': typeof AuthDashboardProfileRoute
   '/_auth/dashboard/': typeof AuthDashboardIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/pricing' | '/' | '/dashboard/profile' | '/dashboard'
+  fullPaths:
+    | ''
+    | '/pricing'
+    | '/'
+    | '/dashboard/analytics'
+    | '/dashboard/profile'
+    | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/pricing' | '/' | '/dashboard/profile' | '/dashboard'
+  to:
+    | ''
+    | '/pricing'
+    | '/'
+    | '/dashboard/analytics'
+    | '/dashboard/profile'
+    | '/dashboard'
   id:
     | '__root__'
     | '/_auth'
     | '/_unauth'
     | '/_unauth/pricing'
     | '/_unauth/'
+    | '/_auth/dashboard/analytics'
     | '/_auth/dashboard/profile'
     | '/_auth/dashboard/'
   fileRoutesById: FileRoutesById
@@ -199,6 +231,7 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth.tsx",
       "children": [
+        "/_auth/dashboard/analytics",
         "/_auth/dashboard/profile",
         "/_auth/dashboard/"
       ]
@@ -217,6 +250,10 @@ export const routeTree = rootRoute
     "/_unauth/": {
       "filePath": "_unauth/index.tsx",
       "parent": "/_unauth"
+    },
+    "/_auth/dashboard/analytics": {
+      "filePath": "_auth/dashboard/analytics.tsx",
+      "parent": "/_auth"
     },
     "/_auth/dashboard/profile": {
       "filePath": "_auth/dashboard/profile.tsx",

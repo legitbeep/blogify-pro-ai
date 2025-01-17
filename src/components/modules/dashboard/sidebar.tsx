@@ -7,6 +7,9 @@ import {
   UserCircle,
   Kanban,
   ChevronDown,
+  AlignEndHorizontal,
+  BotMessageSquare,
+  ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -23,11 +26,18 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { useQuery } from "@tanstack/react-query";
+import AuthService from "@/api/services/authService";
+import ProfileIcon from "@/components/atoms/profile-icon";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SidebarNav({ className, ...props }: SidebarNavProps) {
-  const [isAccountOpen, setIsAccountOpen] = React.useState(false);
+  const userQuery = useQuery({
+    queryKey: AuthService.queryKeys.getUser(),
+    queryFn: AuthService.getUser,
+    staleTime: Infinity,
+  });
 
   return (
     <Sidebar className={cn("border-r", className)} {...props}>
@@ -44,27 +54,28 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
       </SidebarHeader>
       <SidebarContent>
         <div className="px-2 py-2">
-          <h2 className="px-4 text-lg font-semibold tracking-tight">
-            Overview
+          <h2 className="px-2 text-lg font-semibold tracking-tight flex items-center gap-4 justify-between w-full">
+            Overview <ArrowRight className="h-4 w-4" />
           </h2>
+          <div className="border-t dark:border-t-slate-400 border-t-slate-800 my-4" />
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <a href="/dashboard">
                   <LayoutDashboard className="h-4 w-4" />
-                  <span>Dashboard</span>
+                  <span>Home</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <a href="/product">
-                  <Package className="h-4 w-4" />
-                  <span>Product</span>
+                <a href="/dashboard/chat">
+                  <BotMessageSquare className="h-4 w-4" />
+                  <span>AI Chat</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
+            {/* <SidebarMenuItem>
               <Collapsible open={isAccountOpen} onOpenChange={setIsAccountOpen}>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton>
@@ -93,12 +104,12 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
                   </SidebarMenu>
                 </CollapsibleContent>
               </Collapsible>
-            </SidebarMenuItem>
+            </SidebarMenuItem> */}
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <a href="/kanban">
-                  <Kanban className="h-4 w-4" />
-                  <span>Kanban</span>
+                <a href="/dashboard/analytics">
+                  <AlignEndHorizontal className="h-4 w-4" />
+                  <span>Analytics</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -107,13 +118,11 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
       </SidebarContent>
       <SidebarFooter>
         <div className="flex items-center gap-2 p-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted">
-            JO
-          </div>
+          <ProfileIcon />
           <div className="flex flex-col">
-            <span className="text-sm font-medium">John</span>
+            <span className="text-sm font-medium">{userQuery?.data?.name}</span>
             <span className="text-xs text-muted-foreground">
-              demo@gmail.com
+              {userQuery?.data?.email}
             </span>
           </div>
         </div>
