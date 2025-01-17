@@ -2,18 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Mic,
-  Send,
-  Pause,
-  Calendar,
-  Paperclip,
-  Globe,
-  Play,
-  X,
-} from "lucide-react";
+import { Mic, Send, Pause, Paperclip, Play, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { LiveAudioVisualizer } from "react-audio-visualize";
+import useSpeechToText from "@/hooks/useSpeechToText";
+import { useTextToSpeech } from "@/hooks/useTextToSpeech";
+import { toast } from "sonner";
+import { useThemeStore } from "@/store/useThemeStore";
 
 interface ChatMessage {
   id: string;
@@ -32,6 +27,7 @@ interface MediaRecorderWithData extends MediaRecorder {
 }
 
 const ChatModal = () => {
+  const { theme } = useThemeStore();
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -42,6 +38,20 @@ const ChatModal = () => {
   const [visualizerStream, setVisualizerStream] = useState<MediaStream | null>(
     null
   );
+
+  const [transcriptDone, setTranscriptDone] = useState(false);
+  const speechToText = useSpeechToText({
+    continuous: true,
+    interimResults: true,
+    onError: (error) => {
+      console.error("Error:", error);
+      toast.error("Failed to convert to text!");
+    },
+    onStopListening: () => {
+      setTranscriptDone(true);
+    },
+  });
+  const textToSpeech = useTextToSpeech();
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -141,6 +151,8 @@ const ChatModal = () => {
     audioChunksRef.current = [];
     setVisualizerStream(stream);
 
+    speechToText.startListening();
+
     const mediaRecorder = new MediaRecorder(stream, {
       mimeType: "audio/webm;codecs=opus",
     }) as MediaRecorderWithData;
@@ -158,8 +170,20 @@ const ChatModal = () => {
       const audioBlob = new Blob(audioChunksRef.current, {
         type: "audio/webm",
       });
-      console.log("first 1a");
       setVisualizerStream(null);
+      alert("STOPPED 1");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          content: speechToText?.transcript || "Audio message",
+          sender: "user",
+          timestamp: new Date(),
+          type: speechToText?.transcript ? "text" : "audio",
+          audioUrl: URL.createObjectURL(audioBlob),
+        },
+      ]);
+      speechToText.stopListening();
     };
 
     // Request data every 1 second
@@ -174,7 +198,6 @@ const ChatModal = () => {
       mediaRecorderRef.current.stop();
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
-        streamRef.current = null;
       }
       setIsRecording(false);
       setIsPaused(false);
@@ -182,6 +205,7 @@ const ChatModal = () => {
       audioChunksRef.current = [];
       setMediaRecorder(null);
       setVisualizerStream(null);
+      speechToText.cancelListening();
     }
   };
 
@@ -203,6 +227,7 @@ const ChatModal = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (message.trim()) {
       const newMessage: ChatMessage = {
         id: Date.now().toString(),
@@ -232,6 +257,7 @@ const ChatModal = () => {
         mediaRecorderRef.current.state !== "inactive"
       ) {
         return new Promise((resolve) => {
+          speechToText.stopListening();
           mediaRecorderRef.current!.onstop = async () => {
             const audioBlob = new Blob(audioChunksRef.current, {
               type: "audio/webm",
@@ -262,12 +288,30 @@ const ChatModal = () => {
 
             resolve(undefined);
           };
-
           mediaRecorderRef.current!.stop();
         });
       }
     }
   };
+
+  useEffect(() => {
+    if (transcriptDone) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          content: speechToText?.transcriptRef?.current || "Audio message",
+          sender: "user",
+          timestamp: new Date(),
+          type: speechToText?.transcriptRef?.current ? "text" : "audio",
+        },
+      ]);
+      textToSpeech.speak(
+        "I heard you say " + speechToText?.transcriptRef?.current
+      );
+      setTranscriptDone(false);
+    }
+  }, [transcriptDone]);
 
   const handleAudioPlay = (messageId: string, audioUrl: string) => {
     // Stop currently playing audio if any
@@ -322,7 +366,7 @@ const ChatModal = () => {
   return (
     <Dialog>
       <DialogTrigger>
-        <Button size="lg" variant="outline" className="h-11">
+        <Button size="lg" variant="secondary" className="h-11 w-full">
           Explore AI
         </Button>
       </DialogTrigger>
@@ -384,6 +428,14 @@ const ChatModal = () => {
                   >
                     <Mic className="h-5 w-5" />
                   </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Paperclip className="h-5 w-5" />
+                  </Button>
                   <Input
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -396,23 +448,7 @@ const ChatModal = () => {
                     size="icon"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    <Paperclip className="h-5 w-5" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <Calendar className="h-5 w-5" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <Globe className="h-5 w-5" />
+                    <Send className="h-5 w-5" />
                   </Button>
                 </>
               ) : (
@@ -422,6 +458,12 @@ const ChatModal = () => {
                       {formatTime(recordingTime)}
                     </span>
                   </div>
+
+                  <div className="flex gap-1 w-[150px] items-center mx-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full animate-ping mr-1" />
+                    <span className="text-muted-foreground">Recording</span>
+                  </div>
+
                   <div className="w-full h-full flex justify-center items-center">
                     {mediaRecorder && visualizerStream && (
                       <div className="">
@@ -431,7 +473,15 @@ const ChatModal = () => {
                           height={25}
                           barWidth={2}
                           gap={1}
-                          barColor={isPaused ? "#666" : "#fff"}
+                          barColor={
+                            theme == "dark"
+                              ? isPaused
+                                ? "#666"
+                                : "#fff"
+                              : isPaused
+                                ? "#fff"
+                                : "#666"
+                          }
                         />
                       </div>
                     )}

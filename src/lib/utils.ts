@@ -14,3 +14,8 @@ export const loadScript = (src: string): Promise<boolean> => {
     document.body.appendChild(script);
   });
 };
+
+export const login = () => {
+  const AUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/authorize`;
+  window.location.href = AUTH_URL;
+};

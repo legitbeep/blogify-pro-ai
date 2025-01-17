@@ -60,6 +60,7 @@ export const useRazorpay = (): UseRazorpayReturn => {
   const [success, setSuccess] = useState<any>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const { theme } = useThemeStore();
+  const [color] = useState(theme === "light" ? "#000" : "#fff");
 
   const loadRazorpayScript = async (): Promise<boolean> => {
     // Return true immediately if script is already loaded
@@ -84,23 +85,20 @@ export const useRazorpay = (): UseRazorpayReturn => {
         if (!isScriptLoaded) {
           throw new Error("Razorpay SDK failed to load");
         }
-        console.log({
-          url: `${import.meta.env.VITE_API_BASE_URL}/payment-callback`,
-          options,
-        });
         // Initialize Razorpay
         const razorpay = new (window as any).Razorpay({
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
           // callback_url: `${import.meta.env.VITE_API_BASE_URL}/payment-callback`,
           ...options,
           theme: {
             ...ZINC_THEME[theme],
             ...options.theme,
+            color,
           },
           handler: async (response: PaymentResponse) => {
             setIsSuccess(true);
             setIsLoading(false);
-            console.log("Payment successful:", response);
             try {
               // Verify payment
               const verifyResponse = await fetch(

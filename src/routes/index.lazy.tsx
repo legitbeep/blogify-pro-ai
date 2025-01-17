@@ -1,9 +1,15 @@
+"use client";
+
 import { useRazorpay } from "@/api/hooks/useRazorpay";
-import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 import PaymentService from "@/api/services/paymentService";
+<<<<<<< HEAD
 import GradientBackground from "@/components/atoms/gradient-bg";
 import NotificationComponent from "@/components/atoms/notification";
 import ChatModal from "@/components/modules/chat-modal";
+=======
+import ChatModal from "@/components/modules/chat-modal";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+>>>>>>> b99bc5af8ef7d7001462d17df969656e24dad34d
 import { Button } from "@/components/ui/button";
 import { DefaultAreaChart } from "@/components/ui/graphs/area-graph/default";
 import { DefaultBarGraph } from "@/components/ui/graphs/bar-graph/default";
@@ -36,12 +42,12 @@ const DUMMY_PAYMENT = {
   receipt: "order_rcpt_1736779010.612232",
   status: "created",
 };
+
 function RouteComponent() {
   const { theme } = useThemeStore();
   const [color, setColor] = React.useState(theme === "light" ? "#000" : "#fff");
-  const [showChat, setShowChat] = React.useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
-  const { success, error, initiatePayment, isLoading } = useRazorpay();
+  const { initiatePayment, isLoading } = useRazorpay();
 
   useEffect(() => {
     setColor(theme === "light" ? "#000" : "#fff");
@@ -68,9 +74,6 @@ function RouteComponent() {
           orderId: res?.orderId ?? "",
         },
         order_id: res.id,
-        theme: {
-          color,
-        },
       });
     } catch (err) {
       console.error(err);
@@ -78,6 +81,7 @@ function RouteComponent() {
     setOrderLoading(false);
   };
 
+<<<<<<< HEAD
   const {
     socketUrl,
     messageHistory,
@@ -167,5 +171,49 @@ function RouteComponent() {
         </div>
       </div>
     </>
+=======
+  return (
+    <AuroraBackground className="min-h-[100dvh]">
+      <div className="relative min-h-[100dvh] w-full overflow-x-hidden px-4 flex flex-col ">
+        <div className="container flex-grow flex flex-col md:flex-row items-start justify-between py-8 md:py-14">
+          <div className="w-full md:w-1/2 order-2 md:order-1 mt-auto md:mt-0">
+            <div className="text-center md:text-left space-y-6 md:absolute md:bottom-14 md:left-14">
+              <h1 className="bg-gradient-to-br text-transparent dark:from-white from-black/80 from-30% dark:to-black/10 to-black/100 bg-clip-text text-3xl font-bold leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl animate-fade-in">
+                New AI is the way to analyze social data.
+              </h1>
+              <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
+                Access an ever-growing collection of premium, meticulously
+                crafted templates and component packs. Save time and focus on
+                what matters—building standout websites that captivate your
+                audience.
+              </p>
+              <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center md:justify-start">
+                <Button
+                  disabled={isLoading || orderLoading}
+                  size="lg"
+                  className="h-11"
+                  onClick={handlePayment}
+                >
+                  {isLoading || orderLoading ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    "Random Payment"
+                  )}
+                </Button>
+                <ChatModal />
+              </div>
+            </div>
+          </div>
+        </div>
+        <Particles
+          className="absolute inset-0 z-0"
+          quantity={20}
+          ease={80}
+          color={color}
+          refresh
+        />
+      </div>
+    </AuroraBackground>
+>>>>>>> b99bc5af8ef7d7001462d17df969656e24dad34d
   );
 }

@@ -22,7 +22,7 @@ interface DashboardState {
   fetchDashboardData: () => Promise<void>;
 }
 
-const useDashboardStore = create<DashboardState>((set, get) => ({
+const useDashboardStore = create<DashboardState>((set) => ({
   // Initial state
   username: "",
   email: "",
