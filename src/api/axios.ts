@@ -1,3 +1,4 @@
+import { getTokenFromCookie } from "@/lib/utils";
 import axios, {
   AxiosError,
   AxiosResponse,
@@ -22,13 +23,15 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "69420",
   },
 });
 
 // Request interceptor
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem("token");
+    const token = getTokenFromCookie();
+    console.log({ token });
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

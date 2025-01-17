@@ -19,3 +19,17 @@ export const login = () => {
   const AUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/authorize`;
   window.location.href = AUTH_URL;
 };
+
+export const getTokenFromCookie = () => {
+  try {
+    const cookies = document.cookie.split(";");
+    const tokenCookie = cookies.find((cookie) =>
+      cookie.trim().startsWith("authtoken=")
+    );
+    if (!tokenCookie) return null;
+    return tokenCookie.split("=")[1];
+  } catch (error) {
+    console.error("Error extracting token from cookie:", error);
+    return null;
+  }
+};
