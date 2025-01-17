@@ -27,7 +27,7 @@ export const getTokenFromCookie = () => {
       cookie.trim().startsWith("authtoken=")
     );
     if (!tokenCookie) return null;
-    return tokenCookie.split("=")[1];
+    return tokenCookie.split("authtoken=")[1];
   } catch (error) {
     console.error("Error extracting token from cookie:", error);
     return null;

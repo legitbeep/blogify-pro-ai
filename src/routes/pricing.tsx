@@ -112,8 +112,8 @@ function RouteComponent() {
     },
     {
       name: "Enterprise",
-      price: "NA",
-      yearlyPrice: "NA",
+      price: "Custom Plan",
+      yearlyPrice: "Custom Plan",
       period: "per month",
       features: [
         "Everything in Professional",
