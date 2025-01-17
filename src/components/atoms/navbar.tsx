@@ -1,35 +1,22 @@
-<<<<<<< HEAD
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
-=======
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
->>>>>>> b99bc5af8ef7d7001462d17df969656e24dad34d
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { MobileMenu } from "./mobile-menu";
 import { ThemeToggle } from "./theme-toggle";
 import SigninButton from "./signin-button";
-<<<<<<< HEAD
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Bell, BellDot } from "lucide-react";
-import { useState } from "react";
-
-export function Navbar() {
-  const [isNewMessage, setIsNewMessage] = useState(false);
-=======
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
+  // const [isNewMessage, setIsNewMessage] = useState(false);
+  let isNewMessage = false;
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -46,7 +33,6 @@ export function Navbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
->>>>>>> b99bc5af8ef7d7001462d17df969656e24dad34d
 
   return (
     <header
@@ -91,7 +77,6 @@ export function Navbar() {
           </nav> */}
 
           <div className="flex items-center space-x-4">
-<<<<<<< HEAD
             <ThemeToggle />
             <Popover>
               <PopoverTrigger className="">
@@ -105,20 +90,7 @@ export function Navbar() {
                 Place content for the popover here.
               </PopoverContent>
             </Popover>
-
-            <SignedOut>
-              <SigninButton>Login</SigninButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
-            <Button variant="outline" className="text-sm">
-              Get Started
-            </Button>
-=======
-            {/* create web only visible div with flex items center spaxe-x-4 */}
             <div className="hidden md:flex items-center space-x-4">
-              <ThemeToggle />
               <SignedOut>
                 <SigninButton>Login</SigninButton>
               </SignedOut>
@@ -129,7 +101,6 @@ export function Navbar() {
                 Get Started
               </Button>
             </div>
->>>>>>> b99bc5af8ef7d7001462d17df969656e24dad34d
             <MobileMenu />
           </div>
         </div>

@@ -6,6 +6,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import {
+  Dialog,
+  DialogContent,
+  // DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  // DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
 export const Route = createFileRoute("/pricing")({
   component: RouteComponent,
 });
@@ -55,8 +65,12 @@ function RouteComponent() {
     setPaymentLoading(false);
   };
 
-  const onEnterprisePlanClick = () => {
-    window.open("_blank", "https://calendly.com/superlevelhackathon/30min");
+  const onContactSalesClick = () => {
+    window.location.href = "mailto:sales@company.com";
+  };
+
+  const onScheduleMeetClick = () => {
+    window.open("https://calendly.com/superlevelhackathon/30min", "_blank");
   };
 
   const demoPlans = [
@@ -112,9 +126,20 @@ function RouteComponent() {
         "SLA agreement",
       ],
       description: "For large organizations with specific needs",
-      buttonText: "Contact Sales",
       isPopular: false,
-      onClick: onEnterprisePlanClick,
+      multiButton: true,
+      buttons: [
+        {
+          text: "Schedule a Meet",
+          onClick: onScheduleMeetClick,
+          primary: true,
+        },
+        {
+          text: "Get a Call",
+          onClick: onContactSalesClick,
+          primary: false,
+        },
+      ],
     },
   ];
   return (
@@ -124,6 +149,15 @@ function RouteComponent() {
         title="New AI Simple, Transparent Pricing"
         description="Choose the plan that works for you\nAll plans include access to our platform, lead generation tools, and dedicated support."
       />
+      <Dialog open={false}>
+        <DialogContent>
+          <DialogHeader className="flex flex-col gap-5 ">
+            <DialogTitle>Contact our team via</DialogTitle>
+            <Button variant={"secondary"}> Schedule a Meet </Button>
+            <Button> Get a Call</Button>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
