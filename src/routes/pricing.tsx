@@ -143,7 +143,7 @@ function RouteComponent() {
     },
   ];
   return (
-    <div className="min-h-[800px] rounded-lg px-4">
+    <div className="min-h-[800px] rounded-lg px-4 flex justify-center">
       <Pricing
         plans={demoPlans}
         title="New AI Simple, Transparent Pricing"

@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+// import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
@@ -43,7 +43,7 @@ export function Navbar() {
           : "bg-transparent"
       )}
     >
-      <div className="container flex h-14 max-w-screen-2xl items-center md:px-10 px-6">
+      <div className="container flex h-14 max-w-screen-2xl items-center md:px-10 px-6 mx-auto">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-xl ">New AI</span>
@@ -91,12 +91,8 @@ export function Navbar() {
               </PopoverContent>
             </Popover>
             <div className="hidden md:flex items-center space-x-4">
-              <SignedOut>
-                <SigninButton>Login</SigninButton>
-              </SignedOut>
-              <SignedIn>
-                <UserButton afterSignOutUrl="/" />
-              </SignedIn>
+              <SigninButton>Login</SigninButton>
+
               <Button variant="outline" className="text-sm">
                 Get Started
               </Button>

@@ -2,17 +2,37 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { login } from "@/lib/utils";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const links = [
-    { to: "/", label: "FEATURES" },
-    { to: "/", label: "PRICING" },
-    { to: "/", label: "CAREERS" },
-    { to: "/", label: "CONTACT US" },
+    { label: "PRICING" },
+    { label: "LOGIN" },
+    { label: "GET STARTED" },
   ];
+
+  const onLinkClick = (link: (typeof links)[number]) => {
+    switch (link.label) {
+      case "PRICING":
+        navigate({
+          to: "/pricing",
+        });
+        break;
+      case "LOGIN":
+        login();
+        break;
+      case "GET STARTED":
+        navigate({
+          to: "/",
+        });
+        break;
+    }
+    setOpen(false);
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -34,14 +54,13 @@ export function MobileMenu() {
         </div>
         <nav className="flex flex-col space-y-4">
           {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-2xl py-2 hover:text-primary transition-colors"
-              onClick={() => setOpen(false)}
+            <button
+              key={link.label}
+              onClick={() => onLinkClick(link)}
+              className="bg-transparent border-none text-left text-2xl py-2 hover:text-primary transition-colors"
             >
               {link.label}
-            </Link>
+            </button>
           ))}
         </nav>
       </SheetContent>
