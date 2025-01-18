@@ -1,14 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import api from "../axios";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyA7IAEYfqq9aIKx3TRmpq0Tox4ZCuKwlrc",
-  authDomain: "testingpro-f3347.firebaseapp.com",
-  projectId: "testingpro-f3347",
-  storageBucket: "testingpro-f3347.firebasestorage.app",
-  messagingSenderId: "896054172405",
-  appId: "1:896054172405:web:73dcb896f8a0a4b40483bc",
-  measurementId: "G-456QVER7F5",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
