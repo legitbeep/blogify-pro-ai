@@ -10,7 +10,6 @@ export default function FullScreenLock() {
 
   useEffect(() => {
     const isAuthenticated = getTokenFromCookie("isAuthenticated");
-    console.log({ isAuthenticated });
     if (isAuthenticated && isAuthenticated === "true") {
       setIsAuthenticated(true);
     }
