@@ -17,6 +17,7 @@ import { Route as UnauthIndexImport } from './routes/_unauth/index'
 import { Route as UnauthPricingImport } from './routes/_unauth/pricing'
 import { Route as AuthDashboardIndexImport } from './routes/_auth/dashboard/index'
 import { Route as AuthDashboardProfileImport } from './routes/_auth/dashboard/profile'
+import { Route as AuthDashboardPreviewImport } from './routes/_auth/dashboard/preview'
 import { Route as AuthDashboardAnalyticsImport } from './routes/_auth/dashboard/analytics'
 
 // Create/Update Routes
@@ -52,6 +53,12 @@ const AuthDashboardIndexRoute = AuthDashboardIndexImport.update({
 const AuthDashboardProfileRoute = AuthDashboardProfileImport.update({
   id: '/dashboard/profile',
   path: '/dashboard/profile',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthDashboardPreviewRoute = AuthDashboardPreviewImport.update({
+  id: '/dashboard/preview',
+  path: '/dashboard/preview',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -100,6 +107,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardAnalyticsImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/dashboard/preview': {
+      id: '/_auth/dashboard/preview'
+      path: '/dashboard/preview'
+      fullPath: '/dashboard/preview'
+      preLoaderRoute: typeof AuthDashboardPreviewImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/dashboard/profile': {
       id: '/_auth/dashboard/profile'
       path: '/dashboard/profile'
@@ -121,12 +135,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteChildren {
   AuthDashboardAnalyticsRoute: typeof AuthDashboardAnalyticsRoute
+  AuthDashboardPreviewRoute: typeof AuthDashboardPreviewRoute
   AuthDashboardProfileRoute: typeof AuthDashboardProfileRoute
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardAnalyticsRoute: AuthDashboardAnalyticsRoute,
+  AuthDashboardPreviewRoute: AuthDashboardPreviewRoute,
   AuthDashboardProfileRoute: AuthDashboardProfileRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
 }
@@ -151,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof UnauthPricingRoute
   '/': typeof UnauthIndexRoute
   '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
+  '/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
 }
@@ -160,6 +177,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof UnauthPricingRoute
   '/': typeof UnauthIndexRoute
   '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
+  '/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
 }
@@ -171,6 +189,7 @@ export interface FileRoutesById {
   '/_unauth/pricing': typeof UnauthPricingRoute
   '/_unauth/': typeof UnauthIndexRoute
   '/_auth/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
+  '/_auth/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/_auth/dashboard/profile': typeof AuthDashboardProfileRoute
   '/_auth/dashboard/': typeof AuthDashboardIndexRoute
 }
@@ -182,6 +201,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/'
     | '/dashboard/analytics'
+    | '/dashboard/preview'
     | '/dashboard/profile'
     | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
@@ -190,6 +210,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/'
     | '/dashboard/analytics'
+    | '/dashboard/preview'
     | '/dashboard/profile'
     | '/dashboard'
   id:
@@ -199,6 +220,7 @@ export interface FileRouteTypes {
     | '/_unauth/pricing'
     | '/_unauth/'
     | '/_auth/dashboard/analytics'
+    | '/_auth/dashboard/preview'
     | '/_auth/dashboard/profile'
     | '/_auth/dashboard/'
   fileRoutesById: FileRoutesById
@@ -232,6 +254,7 @@ export const routeTree = rootRoute
       "filePath": "_auth.tsx",
       "children": [
         "/_auth/dashboard/analytics",
+        "/_auth/dashboard/preview",
         "/_auth/dashboard/profile",
         "/_auth/dashboard/"
       ]
@@ -253,6 +276,10 @@ export const routeTree = rootRoute
     },
     "/_auth/dashboard/analytics": {
       "filePath": "_auth/dashboard/analytics.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/dashboard/preview": {
+      "filePath": "_auth/dashboard/preview.tsx",
       "parent": "/_auth"
     },
     "/_auth/dashboard/profile": {

@@ -12,7 +12,7 @@ interface UseWebSocketDemoReturn {
 }
 
 const useWebSocketDemo = (
-  initialUrl: string = "wss://api.sma-backend.projects.krishnajalan.dev:25565/api"
+  initialUrl: string = import.meta.env.VITE_SOCKET_BASE_URL
 ): UseWebSocketDemoReturn => {
   const [socketUrl, setSocketUrl] = useState<string>(initialUrl);
   const [messageHistory, setMessageHistory] = useState<MessageEvent[]>([]);

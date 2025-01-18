@@ -1,4 +1,5 @@
 import AuthService from "@/api/services/authService";
+import { FileUploader } from "@/components/atoms/file-uploader";
 import NotificationComponent from "@/components/atoms/notification";
 import FullScreenLock from "@/components/layout/full-screen-lock";
 import { useQuery } from "@tanstack/react-query";
@@ -22,6 +23,7 @@ function RootComponent() {
         <Outlet />
         <NotificationComponent />
       </FullScreenLock>
+      <FileUploader />
     </React.Fragment>
   );
 }
