@@ -54,8 +54,8 @@ api.interceptors.response.use(
       // Handle different error status codes
       switch (response.status) {
         case 401:
-          if (window.location.pathname != "/") {
-            // Handle unauthorized
+          const cookieExists = getTokenFromCookie("authtoken");
+          if (window.location.pathname != "/" && !!cookieExists) {
             deleteCookie("authToken");
             window.location.href = "/";
           }
