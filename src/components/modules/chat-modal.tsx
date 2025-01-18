@@ -45,6 +45,21 @@ interface ChatModalProps {
   };
 }
 
+const DEFAULT_AI_MESSAGE: ChatMessage = {
+  id: "-1",
+  message: "Hi, how can help you?",
+  timestamp: new Date(),
+  user_type: "ai",
+  type: "TEXT",
+};
+
+const PREDEFINED_MESSAGES = [
+  "Provide me some insights on reels",
+  "What are the most popular hashtags",
+  "What are the most popular hashtags",
+  ,
+];
+
 const ChatModal = ({
   open = false,
   setOpen = () => {},
@@ -82,32 +97,7 @@ const ChatModal = ({
   });
   const textToSpeech = useTextToSpeech();
 
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-
-  // const [messages, setMessages] = useState<ChatMessage[]>([
-  //   {
-  //     id: "1",
-  //     content: "Hello! How can I help you today?",
-  //     sender: "ai",
-  //     timestamp: new Date(),
-  //     type: "TEXT",
-  //   },
-  //   {
-  //     id: "2",
-  //     content: "I have a question about React",
-  //     sender: "user",
-  //     timestamp: new Date(),
-  //     type: "TEXT",
-  //   },
-  //   {
-  //     id: "3",
-  //     content:
-  //       "Sure, I'd be happy to help with React. What would you like to know?",
-  //     sender: "ai",
-  //     timestamp: new Date(),
-  //     type: "TEXT",
-  //   },
-  // ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([DEFAULT_AI_MESSAGE]);
 
   const mediaRecorderRef = useRef<MediaRecorderWithData | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -397,12 +387,17 @@ const ChatModal = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (message.trim()) {
+  const handleSubmit = async (
+    e?: React.FormEvent | null,
+    messageText?: string
+  ) => {
+    e?.preventDefault();
+    messageText = messageText || message;
+
+    if (messageText.trim()) {
       const newMessage: ChatMessage = {
         id: Date.now().toString(),
-        message: message,
+        message: messageText,
         user_type: "user",
         timestamp: new Date(),
         type: "TEXT",
@@ -410,7 +405,7 @@ const ChatModal = ({
       setMessages((prev) => [...prev, newMessage]);
       setMessage("");
 
-      const textMessageResponse = await sendMessage("TEXT", message);
+      const textMessageResponse = await sendMessage("TEXT", messageText);
       // console.log(textMessageResponse, "txt msgs");
       // Simulate AI response
       // setTimeout(() => {
@@ -647,6 +642,23 @@ const ChatModal = ({
             ))}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* create a container which will show the PREDEFINED_MESSAGES as buttons and if they are overflowing there should be slider to scroll them */}
+          {messages?.length == 1 && !isRecording && (
+            // max width should be either max of 2xl or the width of the container
+            <div className="flex gap-2 overflow-x-auto p-4 max-w-2xl">
+              {PREDEFINED_MESSAGES.map((msg, key) => (
+                <Button
+                  key={key}
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleSubmit(null, msg)}
+                >
+                  {msg}
+                </Button>
+              ))}
+            </div>
+          )}
 
           <div className="border-t p-4">
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
