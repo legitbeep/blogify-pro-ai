@@ -150,7 +150,7 @@ export function Pricing({
         </p>
       </div>
 
-      <div className="flex justify-center mb-10">
+      {/* <div className="flex justify-center mb-10">
         <label className="relative inline-flex items-center cursor-pointer">
           <Label>
             <Switch
@@ -164,7 +164,7 @@ export function Pricing({
         <span className="ml-2 font-semibold">
           Annual billing <span className="text-primary">(Save 20%)</span>
         </span>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 md:grid-cols-3 sm:2 gap-4">
         {plans.map((plan, index) => (

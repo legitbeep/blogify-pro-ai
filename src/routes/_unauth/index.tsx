@@ -173,7 +173,7 @@ function RouteComponent() {
           </div>
           <Particles
             className="absolute inset-0 z-0"
-            quantity={20}
+            quantity={60}
             ease={80}
             color={color}
             refresh
