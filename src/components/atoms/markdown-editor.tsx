@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
 import { Pen } from "lucide-react";
 
-export default function MarkdownEditor() {
-  const [value, setValue] = React.useState("**Hello world!!!**");
+export default function MarkdownEditor(value: any, setValue: any) {
   const [showEdit, setShowEdit] = useState(false);
 
   const handleChange = (newValue?: string) => {

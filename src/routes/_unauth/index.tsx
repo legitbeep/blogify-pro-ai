@@ -3,6 +3,7 @@ import AuthService from "@/api/services/authService";
 
 // import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 import PaymentService from "@/api/services/paymentService";
+import { FileUploader } from "@/components/atoms/file-uploader";
 import BlogListing from "@/components/modules/blogs/blogs-listing";
 
 // import GradientBackground from "@/components/atoms/gradient-bg";
@@ -59,6 +60,8 @@ function RouteComponent() {
   const { theme } = useThemeStore();
   const [color, setColor] = React.useState(theme === "light" ? "#000" : "#fff");
   const [orderLoading, setOrderLoading] = useState(false);
+  const [createPost, setCreatePost] = useState(false);
+
   const razorpayObj = useRazorpay();
   const [showChat, setShowChat] = useState(false);
   const navigate = useNavigate();
@@ -112,11 +115,12 @@ function RouteComponent() {
   const handlePaymentModalAction = () => {
     razorpayObj?.resetPayment();
   };
+
+  console.log("");
+
   const onGetStarted = () => {
     if (!!userQuery?.data) {
-      navigate({
-        to: "/dashboard",
-      });
+      setCreatePost(true);
     } else {
       login();
     }
@@ -181,6 +185,7 @@ function RouteComponent() {
         </div>
       </AuroraBackground>
       <BlogListing />
+      {createPost && <FileUploader />}
     </>
   );
 }

@@ -11,7 +11,7 @@ export const useToken = () => {
   const { user } = useUser();
   const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
   const [backendToken, setBackendToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchBackendToken = async () => {

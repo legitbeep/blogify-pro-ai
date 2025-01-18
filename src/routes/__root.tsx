@@ -52,7 +52,6 @@ function RootComponent() {
         <Outlet />
         <NotificationComponent />
       </FullScreenLock>
-      <FileUploader />
     </React.Fragment>
   );
 }

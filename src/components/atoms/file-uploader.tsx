@@ -18,17 +18,17 @@ import { ImageUploader } from "./image-uploader";
 import { TextInput } from "./text-input";
 
 export function FileUploader() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const handleUploadComplete = () => {
     setIsOpen(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={handleUploadComplete}>
+      {/* <DialogTrigger asChild>
         <Button variant="outline">Upload File</Button>
-      </DialogTrigger>
+      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Upload File</DialogTitle>
