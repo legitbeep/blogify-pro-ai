@@ -554,7 +554,7 @@ const ChatModal = ({
         file_type: file.type,
         file_path: `images`,
       });
-
+      console.log("first 2");
       const uploadUrl = uploadUrlResponse.presigned_url;
 
       // Upload the file to S3
