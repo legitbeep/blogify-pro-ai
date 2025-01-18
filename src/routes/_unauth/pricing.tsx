@@ -113,6 +113,7 @@ function RouteComponent() {
         description: "",
         notes: {
           orderId: res?.orderId ?? "",
+          userId: userQuery?.data?.id ?? "",
         },
         order_id: res.id,
       });
@@ -139,7 +140,7 @@ function RouteComponent() {
         "48-hour support response time",
       ],
       description: "Perfect for individuals and small projects",
-      buttonText: isLoggedIn ? "Your current plan" : "Start Free Trial",
+      buttonText: isLoggedIn ? "Included in plan" : "Start Free Trial",
       isPopular: false,
       onClick: onFreePlanClick,
       disabled: isLoggedIn,

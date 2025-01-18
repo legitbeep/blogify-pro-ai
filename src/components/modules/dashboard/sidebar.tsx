@@ -1,38 +1,23 @@
 "use client";
 
-import * as React from "react";
-import {
-  LayoutDashboard,
-  Package,
-  UserCircle,
-  Kanban,
-  ChevronDown,
-  AlignEndHorizontal,
-  BotMessageSquare,
-  ArrowRight,
-} from "lucide-react";
-import { cn, CONSTANTS } from "@/lib/utils";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from "@/components/ui/sidebar";
-import { useQuery } from "@tanstack/react-query";
 import AuthService from "@/api/services/authService";
+import LanguageDialog from "@/components/atoms/language-dialog";
 import ProfileIcon from "@/components/atoms/profile-icon";
 import { Button } from "@/components/ui/button";
-import { Popover } from "@/components/ui/popover";
-import { useMatches, useNavigate, useParams } from "@tanstack/react-router";
-import LanguageDialog from "@/components/atoms/language-dialog";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { cn, CONSTANTS } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { useMatches, useNavigate } from "@tanstack/react-router";
+import { ChevronDown, Package } from "lucide-react";
+import * as React from "react";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLDivElement> {}
 

@@ -1,25 +1,56 @@
-import { useState } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
+  CommandShortcut,
 } from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { CommandList, CommandSeparator } from "cmdk";
+import {
+  Calculator,
+  Calendar,
+  Check,
+  CheckIcon,
+  ChevronsUpDown,
+  Circle,
+  CircleCheck,
+  Smile,
+  Square,
+  User,
+} from "lucide-react";
+import { useState } from "react";
 
+// const tags = [
+//   { value: "react", label: "React" },
+//   { value: "typescript", label: "TypeScript" },
+//   { value: "javascript", label: "JavaScript" },
+//   { value: "programming", label: "Programming" },
+// ];
+
+// create blog tags with dummy data like technology, programming, etc.
 const tags = [
-  { value: "react", label: "React" },
-  { value: "typescript", label: "TypeScript" },
-  { value: "javascript", label: "JavaScript" },
+  { value: "technology", label: "Technology" },
   { value: "programming", label: "Programming" },
+  { value: "lifestyle", label: "Lifestyle" },
+  { value: "health", label: "Health" },
+  { value: "fitness", label: "Fitness" },
+  { value: "food", label: "Food" },
+  { value: "travel", label: "Travel" },
+  { value: "fashion", label: "Fashion" },
+  { value: "beauty", label: "Beauty" },
+  { value: "education", label: "Education" },
+  { value: "business", label: "Business" },
+  { value: "finance", label: "Finance" },
+  { value: "marketing", label: "Marketing" },
+  { value: "design", label: "Design" },
+  { value: "career", label: "Career" },
+  { value: "job", label: "Job" },
 ];
 
 interface FilterBarProps {
@@ -34,13 +65,17 @@ export default function FilterBar({ onFilter }: FilterBarProps) {
     const updatedTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag];
+
+    console.log({ tag, selectedTags, updatedTags });
     setSelectedTags(updatedTags);
     onFilter(updatedTags);
   };
 
+  console.log({ selectedTags });
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <Popover>
+      <PopoverTrigger className="">
         <Button
           variant="outline"
           role="combobox"
@@ -53,28 +88,26 @@ export default function FilterBar({ onFilter }: FilterBarProps) {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full md:w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search tags..." />
-          <CommandEmpty>No tag found.</CommandEmpty>
-          <CommandGroup>
+      <PopoverContent className="p-0 ">
+        <Command className="rounded-lg border shadow-md">
+          <div className="flex flex-col gap-2 p-2 max-h-[300px] overflow-y-auto">
             {tags.map((tag) => (
-              <CommandItem
+              <Button
+                variant={
+                  selectedTags.includes(tag.value) ? "secondary" : "ghost"
+                }
+                onClick={() => handleSelect(tag.value)}
                 key={tag.value}
-                onSelect={() => handleSelect(tag.value)}
               >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    selectedTags.includes(tag.value)
-                      ? "opacity-100"
-                      : "opacity-0"
-                  )}
-                />
-                {tag.label}
-              </CommandItem>
+                <span>{tag?.label}</span>
+                {selectedTags.includes(tag.value) ? (
+                  <CircleCheck className="w-4 h-4 ml-auto" />
+                ) : (
+                  <Circle className="w-4 h-4 ml-auto" />
+                )}
+              </Button>
             ))}
-          </CommandGroup>
+          </div>
         </Command>
       </PopoverContent>
     </Popover>

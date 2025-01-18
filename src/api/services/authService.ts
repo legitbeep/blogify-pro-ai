@@ -5,6 +5,7 @@ interface UserDataResponse {
   name: string;
   email: string;
   id: string;
+  post_remaining?: number;
 }
 
 interface TokenResponse {
