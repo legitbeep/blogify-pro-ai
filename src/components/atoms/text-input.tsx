@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { redirect, useNavigate } from "@tanstack/react-router";
+import BlogService from "@/api/services/blogService";
 
 interface TextInputProps {
   onUploadComplete: () => void;
@@ -16,28 +17,16 @@ export function TextInput({ onUploadComplete }: TextInputProps) {
 
   const uploadMutation = useMutation({
     mutationFn: async (textContent: string) => {
-      // Simulate upload progress
-      setUploadProgress(25);
-
-      // Store in localStorage
-      localStorage.setItem("textData", textContent);
-      localStorage.setItem("fileType", "text");
-
-      setUploadProgress(75);
-
-      // Simulate API call - replace with your actual API endpoint
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setUploadProgress(100);
-      onUploadComplete();
-      // Navigate after successful upload
-
-      navigate({
-        to: "/dashboard/preview",
+      const apiResponse = await BlogService.createBlog({
+        content: textContent,
       });
-      return textContent;
+      return apiResponse;
     },
-    onSuccess: () => {},
+    onSuccess: (res) => {
+      navigate({
+        to: `/dashboard/${res}/edit`,
+      });
+    },
     onError: (error) => {
       console.error("Upload failed:", error);
       setUploadProgress(0);

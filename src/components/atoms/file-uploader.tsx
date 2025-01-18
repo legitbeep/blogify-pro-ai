@@ -36,10 +36,9 @@ export function FileUploader({
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="video" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="video">Video</TabsTrigger>
             <TabsTrigger value="audio">Audio</TabsTrigger>
-            <TabsTrigger value="image">Image</TabsTrigger>
             <TabsTrigger value="file">File</TabsTrigger>
             <TabsTrigger value="text">Text</TabsTrigger>
           </TabsList>
@@ -48,9 +47,6 @@ export function FileUploader({
           </TabsContent>
           <TabsContent value="audio">
             <AudioUploader onUploadComplete={handleUploadComplete} />
-          </TabsContent>
-          <TabsContent value="image">
-            <ImageUploader onUploadComplete={handleUploadComplete} />
           </TabsContent>
           <TabsContent value="file">
             <GenericFileUploader onUploadComplete={handleUploadComplete} />

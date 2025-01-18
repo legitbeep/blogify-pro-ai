@@ -16,10 +16,7 @@ class TranscriptService {
   static async getTranscriptData(
     data: TranscriptDataRequest
   ): Promise<TranscriptDataResponse> {
-    return api.post(
-      "https://be61-36-255-8-53.ngrok-free.app/api/transcript",
-      data
-    );
+    return apiService.post("/transcript", data);
   }
 }
 

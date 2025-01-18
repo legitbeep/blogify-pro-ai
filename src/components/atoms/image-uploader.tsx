@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { uploadFile } from "@/lib/uploadFile";
+import BlogService from "@/api/services/blogService";
+import { useNavigate } from "@tanstack/react-router";
 
 interface ImageUploaderProps {
   onUploadComplete: () => void;
@@ -12,6 +14,7 @@ interface ImageUploaderProps {
 export function ImageUploader({ onUploadComplete }: ImageUploaderProps) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState("");
+  const navigate = useNavigate();
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -21,17 +24,27 @@ export function ImageUploader({ onUploadComplete }: ImageUploaderProps) {
       await handleUpload(file);
     }
   };
-
   const handleUpload = async (file: Blob) => {
     try {
-      await uploadFile(file, "image", setUploadProgress, setUploadStatus);
+      const res = await uploadFile(
+        file,
+        "image",
+        setUploadProgress,
+        setUploadStatus
+      );
+      console.log({ res });
+      const apiResponse = await BlogService.createBlog({
+        content: res.response,
+      });
       onUploadComplete();
+      navigate({
+        to: `/dashboard/${apiResponse}/edit`,
+      });
     } catch (error) {
       console.error("Upload failed:", error);
       setUploadStatus("Upload failed");
     }
   };
-
   return (
     <div className="space-y-4">
       <input

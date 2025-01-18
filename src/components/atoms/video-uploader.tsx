@@ -4,6 +4,8 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { uploadFile } from "@/lib/uploadFile";
+import BlogService from "@/api/services/blogService";
+import { useNavigate } from "@tanstack/react-router";
 
 interface VideoUploaderProps {
   onUploadComplete: () => void;
@@ -16,7 +18,7 @@ export function VideoUploader({ onUploadComplete }: VideoUploaderProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
+  const navigate = useNavigate();
   const startRecording = async () => {
     try {
       clearPreview();
@@ -61,8 +63,19 @@ export function VideoUploader({ onUploadComplete }: VideoUploaderProps) {
 
   const handleUpload = async (file: Blob) => {
     try {
-      await uploadFile(file, "video", setUploadProgress, setUploadStatus);
+      const res = await uploadFile(
+        file,
+        "video",
+        setUploadProgress,
+        setUploadStatus
+      );
+      const apiResponse = await BlogService.createBlog({
+        content: res.response,
+      });
       onUploadComplete();
+      navigate({
+        to: `/dashboard/${apiResponse}/edit`,
+      });
     } catch (error) {
       console.error("Upload failed:", error);
       setUploadStatus("Upload failed");

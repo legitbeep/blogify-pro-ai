@@ -121,6 +121,7 @@ function RouteComponent() {
                     size="lg"
                     className="h-11 group relative"
                     onClick={onGetStarted}
+                    disabled={userQuery?.isLoading}
                   >
                     Get Started
                     <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-200 ease-in-out group-hover:translate-x-4" />
@@ -143,7 +144,7 @@ function RouteComponent() {
           </div>
           <Particles
             className="absolute inset-0 z-0"
-            quantity={20}
+            quantity={60}
             ease={80}
             color={color}
             refresh

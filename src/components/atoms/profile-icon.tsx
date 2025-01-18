@@ -9,6 +9,7 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/clerk-react";
+import { Button } from "../ui/button";
 const sizeClasses = {
   sm: "w-8 h-8",
   md: "w-12 h-12",
@@ -69,7 +70,9 @@ const ProfileIcon = ({ size = "md" }: { size?: sizeKey }) => {
   return (
     <>
       <SignedOut>
-        <SignInButton />
+        <SignInButton>
+          <Button>Login</Button>
+        </SignInButton>
       </SignedOut>
       <SignedIn>
         <UserButton />

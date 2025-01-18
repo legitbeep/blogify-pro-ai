@@ -4,6 +4,8 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { uploadFile } from "@/lib/uploadFile";
+import BlogService from "@/api/services/blogService";
+import { useNavigate } from "@tanstack/react-router";
 
 interface AudioUploaderProps {
   onUploadComplete: () => void;
@@ -15,7 +17,7 @@ export function AudioUploader({ onUploadComplete }: AudioUploaderProps) {
   const [uploadStatus, setUploadStatus] = useState("");
   const audioRef = useRef<HTMLAudioElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
+  const navigate = useNavigate();
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -49,8 +51,19 @@ export function AudioUploader({ onUploadComplete }: AudioUploaderProps) {
 
   const handleUpload = async (file: Blob) => {
     try {
-      await uploadFile(file, "audio", setUploadProgress, setUploadStatus);
+      const res = await uploadFile(
+        file,
+        "audio",
+        setUploadProgress,
+        setUploadStatus
+      );
+      const apiResponse = await BlogService.createBlog({
+        content: res.response,
+      });
       onUploadComplete();
+      navigate({
+        to: `/dashboard/${apiResponse}/edit`,
+      });
     } catch (error) {
       console.error("Upload failed:", error);
       setUploadStatus("Upload failed");

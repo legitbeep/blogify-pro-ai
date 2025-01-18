@@ -26,11 +26,11 @@ function RouteComponent() {
 
         if (textData) {
           try {
-            const apiResponse = await BlogService.getBlog({
+            const apiResponse = await BlogService.createBlog({
               content: textData,
             });
 
-            setResponse(apiResponse.response);
+            setResponse(apiResponse);
           } catch (error) {
             console.error("Error calling TranscriptService:", error);
             setResponse("Failed to fetch transcript data");
