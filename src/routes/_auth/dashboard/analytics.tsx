@@ -14,8 +14,6 @@ export const Route = createFileRoute("/_auth/dashboard/analytics")({
 function RouteComponent() {
   return (
     <>
-      <NotificationComponent />
-
       <div className="relative min-h-[calc(100dvh-130px)] ">
         {/* JUST FOR SAMPLE PURPOSE TO SHOW THAT THIS IS INTEGRATED */}
         <div className="grid md:grid-cols-2 md:gap-8 grid-cols-1 gap-4">

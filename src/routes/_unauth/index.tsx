@@ -94,7 +94,7 @@ function RouteComponent() {
         <div className="container w-full flex-grow flex flex-col md:flex-row items-start justify-between py-8 md:py-14">
           <div className="w-full md:w-1/2 order-2 md:order-1 mt-auto md:mt-0">
             <div className="text-center md:text-left space-y-6 md:absolute md:bottom-14 md:left-14">
-              <h1 className="bg-gradient-to-br text-transparent dark:from-white from-black/80 from-30% dark:to-black/10 to-black/100 bg-clip-text text-3xl font-bold leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl animate-fade-in">
+              <h1 className="bg-gradient-to-br text-transparent dark:from-white from-black/80 from-40% dark:to-black/100 to-orange-700 bg-clip-text text-3xl font-bold leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl animate-fade-in">
                 New AI is the way to analyze social data.
               </h1>
               <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
