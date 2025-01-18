@@ -1,10 +1,8 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { cn, getTokenFromCookie, setCookie } from "@/lib/utils";
+import { getTokenFromCookie, setCookie } from "@/lib/utils";
+import { PropsWithChildren, useEffect, useState } from "react";
 
-export default function FullScreenLock() {
+const FullScreenLock = ({ children }: PropsWithChildren) => {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -24,20 +22,22 @@ export default function FullScreenLock() {
     setPassword("");
   };
 
-  return (
-    !isAuthenticated && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
-        <form onSubmit={handleSubmit} className="w-full max-w-sm">
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-            className={"h-12 text-lg text-center"}
-            required
-          />
-        </form>
-      </div>
-    )
+  return !isAuthenticated ? (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm">
+        <Input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter password"
+          className={"h-12 text-lg text-center"}
+          required
+        />
+      </form>
+    </div>
+  ) : (
+    <>{children}</>
   );
-}
+};
+
+export default FullScreenLock;

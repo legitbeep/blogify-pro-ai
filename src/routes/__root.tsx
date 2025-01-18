@@ -17,10 +17,11 @@ function RootComponent() {
   });
   return (
     <React.Fragment>
-      <Outlet />
       {/* TODO: Delete this */}
-      <FullScreenLock />
-      <NotificationComponent />
+      <FullScreenLock>
+        <Outlet />
+        <NotificationComponent />
+      </FullScreenLock>
     </React.Fragment>
   );
 }
