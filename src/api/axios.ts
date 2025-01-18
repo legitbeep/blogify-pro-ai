@@ -1,4 +1,8 @@
-import { deleteCookie, getTokenFromCookie } from "@/lib/utils";
+import {
+  CONSTANTS,
+  deleteKeyFromLocalStorage,
+  getKeyFromLocalStorage,
+} from "@/lib/utils";
 import { router } from "@/main";
 import axios, {
   AxiosError,
@@ -31,7 +35,7 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getTokenFromCookie("authtoken");
+    const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -44,11 +48,11 @@ api.interceptors.request.use(
 );
 
 const handleUnauthorized = (errorMessage = "Something went wrong") => {
-  const cookieExists = getTokenFromCookie("authtoken");
+  const cookieExists = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
   const isAuthRoute = window.location.pathname.includes("/dashboard");
   if ((window.location.pathname !== "/" && !!cookieExists) || isAuthRoute) {
     console.log("Handling unauthorized:", errorMessage);
-    deleteCookie("authToken");
+    deleteKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
     router.navigate({
       to: "/",
       replace: true,

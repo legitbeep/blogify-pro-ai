@@ -64,3 +64,20 @@ export const setCookie = (name: string, value: string, days: number) => {
   // set the cookie
   document.cookie = cookieValue;
 };
+
+export const CONSTANTS = {
+  CHATBOT_ID: "chat-bot",
+  AUTH_TOKEN: "authToken",
+};
+
+export const getKeyFromLocalStorage = (token = "authtoken") => {
+  return localStorage.getItem(token);
+};
+
+export const setKeyInLocalStorage = (token: string, value: any) => {
+  localStorage.setItem(token, value);
+};
+
+export const deleteKeyFromLocalStorage = (key: string) => {
+  localStorage.removeItem(key);
+};

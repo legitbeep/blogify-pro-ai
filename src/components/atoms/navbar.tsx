@@ -5,6 +5,7 @@ import { MobileMenu } from "./mobile-menu";
 import SigninButton from "./signin-button";
 import { ThemeToggle } from "./theme-toggle";
 import ProfileIcon from "./profile-icon";
+import LanguageDialog from "./language-dialog";
 
 export function Navbar() {
   // const [isNewMessage, setIsNewMessage] = useState(false);
@@ -37,7 +38,7 @@ export function Navbar() {
       <div className="flex h-14 items-center md:px-10 px-6">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
-            <span className="text-xl ">New AI</span>
+            <span className="text-xl ">Blogify Pro</span>
           </Link>
 
           {/* <nav className="hidden md:flex items-center space-x-6">

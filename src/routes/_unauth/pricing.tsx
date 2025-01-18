@@ -113,6 +113,7 @@ function RouteComponent() {
         description: "",
         notes: {
           orderId: res?.orderId ?? "",
+          userId: userQuery?.data?.id ?? "",
         },
         order_id: res.id,
       });
@@ -139,7 +140,7 @@ function RouteComponent() {
         "48-hour support response time",
       ],
       description: "Perfect for individuals and small projects",
-      buttonText: isLoggedIn ? "Your current plan" : "Start Free Trial",
+      buttonText: isLoggedIn ? "Included in plan" : "Start Free Trial",
       isPopular: false,
       onClick: onFreePlanClick,
       disabled: isLoggedIn,
@@ -201,7 +202,7 @@ function RouteComponent() {
     <SpotlightContainer>
       <Pricing
         plans={demoPlans}
-        title="New AI Simple, Transparent Pricing"
+        title="Blogify Pro Simple, Transparent Pricing"
         description="Choose the plan that works for you\nAll plans include access to our platform, lead generation tools, and dedicated support."
       />
       <PhoneDialog

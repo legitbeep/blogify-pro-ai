@@ -19,6 +19,7 @@ import { Route as AuthDashboardIndexImport } from './routes/_auth/dashboard/inde
 import { Route as AuthDashboardProfileImport } from './routes/_auth/dashboard/profile'
 import { Route as AuthDashboardPreviewImport } from './routes/_auth/dashboard/preview'
 import { Route as AuthDashboardAnalyticsImport } from './routes/_auth/dashboard/analytics'
+import { Route as AuthDashboardChatChatIdImport } from './routes/_auth/dashboard/chat/$chatId'
 
 // Create/Update Routes
 
@@ -65,6 +66,12 @@ const AuthDashboardPreviewRoute = AuthDashboardPreviewImport.update({
 const AuthDashboardAnalyticsRoute = AuthDashboardAnalyticsImport.update({
   id: '/dashboard/analytics',
   path: '/dashboard/analytics',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthDashboardChatChatIdRoute = AuthDashboardChatChatIdImport.update({
+  id: '/dashboard/chat/$chatId',
+  path: '/dashboard/chat/$chatId',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -128,6 +135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardIndexImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/dashboard/chat/$chatId': {
+      id: '/_auth/dashboard/chat/$chatId'
+      path: '/dashboard/chat/$chatId'
+      fullPath: '/dashboard/chat/$chatId'
+      preLoaderRoute: typeof AuthDashboardChatChatIdImport
+      parentRoute: typeof AuthImport
+    }
   }
 }
 
@@ -138,6 +152,7 @@ interface AuthRouteChildren {
   AuthDashboardPreviewRoute: typeof AuthDashboardPreviewRoute
   AuthDashboardProfileRoute: typeof AuthDashboardProfileRoute
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
+  AuthDashboardChatChatIdRoute: typeof AuthDashboardChatChatIdRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -145,6 +160,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardPreviewRoute: AuthDashboardPreviewRoute,
   AuthDashboardProfileRoute: AuthDashboardProfileRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
+  AuthDashboardChatChatIdRoute: AuthDashboardChatChatIdRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -170,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
+  '/dashboard/chat/$chatId': typeof AuthDashboardChatChatIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -180,6 +197,7 @@ export interface FileRoutesByTo {
   '/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
+  '/dashboard/chat/$chatId': typeof AuthDashboardChatChatIdRoute
 }
 
 export interface FileRoutesById {
@@ -192,6 +210,7 @@ export interface FileRoutesById {
   '/_auth/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/_auth/dashboard/profile': typeof AuthDashboardProfileRoute
   '/_auth/dashboard/': typeof AuthDashboardIndexRoute
+  '/_auth/dashboard/chat/$chatId': typeof AuthDashboardChatChatIdRoute
 }
 
 export interface FileRouteTypes {
@@ -204,6 +223,7 @@ export interface FileRouteTypes {
     | '/dashboard/preview'
     | '/dashboard/profile'
     | '/dashboard'
+    | '/dashboard/chat/$chatId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -213,6 +233,7 @@ export interface FileRouteTypes {
     | '/dashboard/preview'
     | '/dashboard/profile'
     | '/dashboard'
+    | '/dashboard/chat/$chatId'
   id:
     | '__root__'
     | '/_auth'
@@ -223,6 +244,7 @@ export interface FileRouteTypes {
     | '/_auth/dashboard/preview'
     | '/_auth/dashboard/profile'
     | '/_auth/dashboard/'
+    | '/_auth/dashboard/chat/$chatId'
   fileRoutesById: FileRoutesById
 }
 
@@ -256,7 +278,8 @@ export const routeTree = rootRoute
         "/_auth/dashboard/analytics",
         "/_auth/dashboard/preview",
         "/_auth/dashboard/profile",
-        "/_auth/dashboard/"
+        "/_auth/dashboard/",
+        "/_auth/dashboard/chat/$chatId"
       ]
     },
     "/_unauth": {
@@ -288,6 +311,10 @@ export const routeTree = rootRoute
     },
     "/_auth/dashboard/": {
       "filePath": "_auth/dashboard/index.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/dashboard/chat/$chatId": {
+      "filePath": "_auth/dashboard/chat/$chatId.tsx",
       "parent": "/_auth"
     }
   }
