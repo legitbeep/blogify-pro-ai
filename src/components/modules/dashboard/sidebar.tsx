@@ -118,7 +118,7 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
       </SidebarContent>
       <SidebarFooter>
         <div className="flex items-center gap-2 p-4">
-          <ProfileIcon />
+          <ProfileIcon size="sm" />
           <div className="flex flex-col">
             <span className="text-sm font-medium">{userQuery?.data?.name}</span>
             <span className="text-xs text-muted-foreground">

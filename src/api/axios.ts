@@ -30,7 +30,7 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getTokenFromCookie("authToken");
+    const token = getTokenFromCookie("authtoken");
     console.log({ token });
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

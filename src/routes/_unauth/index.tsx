@@ -6,7 +6,10 @@ import ImageUpload from "@/components/atoms/image-upload";
 // import GradientBackground from "@/components/atoms/gradient-bg";
 // import NotificationComponent from "@/components/atoms/notification";
 import ChatModal from "@/components/modules/chat-modal";
-import { PurchaseDialogDemo } from "@/components/modules/pricing/pricing-modal";
+import {
+  PurchaseDialog,
+  PurchaseDialogDemo,
+} from "@/components/modules/pricing/pricing-modal";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
 // import { DefaultAreaChart } from "@/components/ui/graphs/area-graph/default";
@@ -45,8 +48,10 @@ function RouteComponent() {
   const { theme } = useThemeStore();
   const [color, setColor] = React.useState(theme === "light" ? "#000" : "#fff");
   const [orderLoading, setOrderLoading] = useState(false);
-  const { initiatePayment, isLoading } = useRazorpay();
+  const razorpayObj = useRazorpay();
   const [showChat, setShowChat] = useState(false);
+
+  const { initiatePayment, isLoading } = razorpayObj;
 
   useEffect(() => {
     setColor(theme === "light" ? "#000" : "#fff");
@@ -79,6 +84,10 @@ function RouteComponent() {
     }
     setOrderLoading(false);
   };
+
+  const handlePaymentModalAction = () => {
+    razorpayObj?.resetPayment();
+  };
   return (
     <AuroraBackground className="min-h-[100dvh]">
       <div className="relative min-h-[100dvh] w-full overflow-x-hidden px-4 flex flex-col ">
@@ -108,7 +117,12 @@ function RouteComponent() {
                   )}
                 </Button>
                 <ChatModal open={showChat} setOpen={setShowChat} />
-                <PurchaseDialogDemo />
+                <PurchaseDialog
+                  isOpen={razorpayObj?.isSuccess || razorpayObj?.isError}
+                  onClose={razorpayObj?.resetPayment}
+                  onAction={handlePaymentModalAction}
+                  isSuccess={razorpayObj?.isSuccess}
+                />
               </div>
             </div>
           </div>

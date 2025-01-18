@@ -26,6 +26,7 @@ export const getTokenFromCookie = (key: string) => {
     const tokenCookie = cookies.find((cookie) =>
       cookie.trim().startsWith(`${key}=`)
     );
+    console.log({ tokenCookie, key });
     if (!tokenCookie) return null;
     return tokenCookie.split(`${key}=`)[1];
   } catch (error) {

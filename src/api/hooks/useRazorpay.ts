@@ -29,9 +29,11 @@ interface PaymentResponse {
 
 interface UseRazorpayReturn {
   initiatePayment: (options: Omit<RazorpayOptions, "key">) => Promise<void>;
+  resetPayment: () => void;
   isLoading: boolean;
   error: string | null;
   isSuccess: boolean;
+  isError: boolean;
   success: any;
 }
 
@@ -61,6 +63,7 @@ export const useRazorpay = (): UseRazorpayReturn => {
   const [isSuccess, setIsSuccess] = useState(false);
   const { theme } = useThemeStore();
   const [color] = useState(theme === "light" ? "#000" : "#fff");
+  const [isError, setIsError] = useState(false);
 
   const loadRazorpayScript = async (): Promise<boolean> => {
     // Return true immediately if script is already loaded
@@ -70,6 +73,13 @@ export const useRazorpay = (): UseRazorpayReturn => {
 
     // Load the script if it's not already loaded
     return await loadScript(RAZORPAY_SCRIPT_URL);
+  };
+  const resetPayment = () => {
+    setIsError(false);
+    setIsLoading(false);
+    setError(null);
+    setSuccess(null);
+    setIsSuccess(false);
   };
 
   const initiatePayment = useCallback(
@@ -97,8 +107,6 @@ export const useRazorpay = (): UseRazorpayReturn => {
             color,
           },
           handler: async (response: PaymentResponse) => {
-            setIsSuccess(true);
-            setIsLoading(false);
             try {
               // Verify payment
               const verifyResponse = await fetch(
@@ -113,9 +121,13 @@ export const useRazorpay = (): UseRazorpayReturn => {
               if (!verifyResponse.ok) {
                 throw new Error("Payment verification failed");
               }
+              setIsSuccess(true);
+              setIsError(false);
+              setIsLoading(false);
               setSuccess(response);
             } catch (err) {
               setSuccess(null);
+              setIsError(true);
               setError(
                 err instanceof Error
                   ? err.message
@@ -184,6 +196,8 @@ export const useRazorpay = (): UseRazorpayReturn => {
     isLoading,
     error,
     isSuccess,
+    isError,
     success,
+    resetPayment,
   };
 };
