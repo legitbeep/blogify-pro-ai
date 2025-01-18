@@ -1,5 +1,6 @@
 import AuthService from "@/api/services/authService";
 import NotificationComponent from "@/components/atoms/notification";
+import FullScreenLock from "@/components/layout/full-screen-lock";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import * as React from "react";
@@ -17,6 +18,8 @@ function RootComponent() {
   return (
     <React.Fragment>
       <Outlet />
+      {/* TODO: Delete this */}
+      <FullScreenLock />
       <NotificationComponent />
     </React.Fragment>
   );

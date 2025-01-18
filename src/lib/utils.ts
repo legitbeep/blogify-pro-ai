@@ -52,3 +52,16 @@ export const deleteCookie = (cookieName: string): boolean => {
 
   return true;
 };
+
+// create a function to set a cookie with a given name and value
+export const setCookie = (name: string, value: string, days: number) => {
+  // calculate the expiration date
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+
+  // build the set-cookie string
+  const cookieValue = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+
+  // set the cookie
+  document.cookie = cookieValue;
+};
