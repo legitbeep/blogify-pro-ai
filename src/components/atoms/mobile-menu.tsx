@@ -6,6 +6,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { deleteCookie, login } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import AuthService from "@/api/services/authService";
+import { router } from "@/main";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -40,7 +41,10 @@ export function MobileMenu() {
         break;
       case "LOGOUT":
         deleteCookie("authToken");
-        window.location.href = "/";
+        // window.location.href = "/";
+        router.navigate({
+          to: "/",
+        });
         break;
     }
     setOpen(false);
