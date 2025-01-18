@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { uploadFile } from "@/lib/uploadFile";
+import BlogService from "@/api/services/blogService";
+import { useNavigate } from "@tanstack/react-router";
 
 interface GenericFileUploaderProps {
   onUploadComplete: () => void;
@@ -14,7 +16,7 @@ export function GenericFileUploader({
 }: GenericFileUploaderProps) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState("");
-
+  const navigate = useNavigate();
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -26,8 +28,20 @@ export function GenericFileUploader({
 
   const handleUpload = async (file: Blob) => {
     try {
-      await uploadFile(file, "file", setUploadProgress, setUploadStatus);
+      const res = await uploadFile(
+        file,
+        "file",
+        setUploadProgress,
+        setUploadStatus
+      );
+      console.log({ res });
+      const apiResponse = await BlogService.createBlog({
+        content: res.response,
+      });
       onUploadComplete();
+      navigate({
+        to: `/dashboard/${apiResponse}/edit`,
+      });
     } catch (error) {
       console.error("Upload failed:", error);
       setUploadStatus("Upload failed");

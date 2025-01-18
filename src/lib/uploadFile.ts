@@ -162,6 +162,9 @@ export const uploadFile = async (
         await TranscriptService.getTranscriptData(transcriptData);
       setUploadStatus("Processing complete!");
       return transcriptResponse;
+    } else if (fileType === "file") {
+      transcriptData.file_url = uploadUrl.split("?")[0];
+      transcriptData.media_format = "pdf";
     } else {
       throw new Error(`Unsupported file type: ${fileType}`);
     }
@@ -170,13 +173,11 @@ export const uploadFile = async (
       await TranscriptService.getTranscriptData(transcriptData);
     setUploadStatus("Processing complete!");
 
-    const translateResponse =
-      transcriptResponse &&
-      TranslateService.getTranslateData({
-        text: transcriptResponse.response,
-        source_language_code: "en",
-        target_language_code: "hi",
-      });
+    const translateResponse = await TranslateService.getTranslateData({
+      text: transcriptResponse.response,
+      source_language_code: "en",
+      target_language_code: "hi",
+    });
 
     return translateResponse;
   } catch (error) {

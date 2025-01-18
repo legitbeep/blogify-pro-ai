@@ -159,6 +159,7 @@ function RouteComponent() {
                     size="lg"
                     className="h-11 group relative"
                     onClick={onGetStarted}
+                    disabled={userQuery?.isLoading}
                   >
                     Get Started
                     <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-200 ease-in-out group-hover:translate-x-4" />
