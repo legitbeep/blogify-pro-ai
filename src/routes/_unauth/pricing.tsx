@@ -1,10 +1,10 @@
-import { useRazorpay } from '@/api/hooks/useRazorpay'
-import PaymentService from '@/api/services/paymentService'
-import { Pricing } from '@/components/modules/pricing/pricing'
-import { login } from '@/lib/utils'
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { toast } from 'sonner'
+import { useRazorpay } from "@/api/hooks/useRazorpay";
+import PaymentService from "@/api/services/paymentService";
+import { Pricing } from "@/components/modules/pricing/pricing";
+import { login } from "@/lib/utils";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -13,135 +13,146 @@ import {
   DialogHeader,
   DialogTitle,
   // DialogTrigger,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import AuthService from "@/api/services/authService";
 
-export const Route = createFileRoute('/_unauth/pricing')({
+export const Route = createFileRoute("/_unauth/pricing")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const isLoggedIn = true
-  const razorpayObj = useRazorpay()
-  const [paymentLoading, setPaymentLoading] = useState(false)
+  const isLoggedIn = true;
+  const razorpayObj = useRazorpay();
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const userQuery = useQuery({
+    queryKey: AuthService.queryKeys.getUser(),
+    queryFn: AuthService.getUser,
+    staleTime: Infinity,
+  });
 
   const onFreePlanClick = () => {
     if (isLoggedIn) {
-      toast.message('Already activated!')
+      toast.message("Already activated!");
     } else {
-      login()
+      login();
     }
-  }
+  };
 
   const onProPlanClick = async (isMonthly: boolean) => {
-    setPaymentLoading(true)
+    setPaymentLoading(true);
     try {
       const user = {
-        name: 'John Doe',
-        email: 'johndoe@gmail.com',
+        name: userQuery?.data?.name || "",
+        email: userQuery?.data?.email || "",
+      };
+      if (!user.name || !user.email) {
+        throw new Error("User details not found");
       }
       const res = await PaymentService.createOrder({
         amount: isMonthly ? 999 : 9999,
         customer_details: user,
-      })
-      if (res?.status !== 'created') {
-        toast.error('Order creation failed')
-        throw new Error('Order creation failed')
+      });
+      if (res?.status !== "created") {
+        toast.error("Order creation failed");
+        throw new Error("Order creation failed");
       }
       razorpayObj.initiatePayment({
         amount: res.amount,
         currency: res.currency,
-        name: `Pro plan ${isMonthly ? 'monthly' : 'yearly'}`,
-        description: '',
+        name: `Pro plan ${isMonthly ? "monthly" : "yearly"}`,
+        description: "",
         notes: {
-          orderId: res?.orderId ?? '',
+          orderId: res?.orderId ?? "",
         },
         order_id: res.id,
-      })
+      });
     } catch (err) {
-      console.error(err)
-      toast.error('Something went wrong!')
+      console.error(err);
+      toast.error("Something went wrong!");
     }
-    setPaymentLoading(false)
-  }
+    setPaymentLoading(false);
+  };
 
   const onContactSalesClick = () => {
-    window.location.href = 'mailto:sales@company.com'
-  }
+    window.location.href = "mailto:sales@company.com";
+  };
 
   const onScheduleMeetClick = () => {
-    window.open('https://calendly.com/superlevelhackathon/30min', '_blank')
-  }
+    window.open("https://calendly.com/superlevelhackathon/30min", "_blank");
+  };
 
   const demoPlans = [
     {
-      name: 'Free Trial',
-      price: '0',
-      yearlyPrice: '00',
-      period: 'per month',
+      name: "Free Trial",
+      price: "Free",
+      yearlyPrice: "Free",
+      period: "per month",
       features: [
-        'Up to 10 projects',
-        'Basic analytics',
-        '48-hour support response time',
+        "Up to 10 projects",
+        "Basic analytics",
+        "48-hour support response time",
       ],
-      description: 'Perfect for individuals and small projects',
-      buttonText: isLoggedIn ? 'Your current plan' : 'Start Free Trial',
+      description: "Perfect for individuals and small projects",
+      buttonText: isLoggedIn ? "Your current plan" : "Start Free Trial",
       isPopular: false,
       onClick: onFreePlanClick,
       disabled: isLoggedIn,
     },
     {
-      name: 'Pro Tier',
-      price: '999',
-      yearlyPrice: '9999',
-      period: 'per month',
+      name: "Pro Tier",
+      price: "999",
+      yearlyPrice: "9999",
+      period: "per month",
       features: [
-        'Unlimited projects',
-        'Advanced analytics',
-        '24-hour support response time',
-        'Full API access',
-        'Priority support',
-        'Team collaboration',
-        'Custom integrations',
+        "Unlimited projects",
+        "Advanced analytics",
+        "24-hour support response time",
+        "Full API access",
+        "Priority support",
+        "Team collaboration",
+        "Custom integrations",
       ],
-      description: 'Ideal for growing teams and businesses',
-      buttonText: 'Get Started',
+      description: "Ideal for growing teams and businesses",
+      buttonText: "Get Started",
       isPopular: true,
       onClick: onProPlanClick,
       loading: paymentLoading || razorpayObj.isLoading,
     },
     {
-      name: 'Enterprise',
-      price: 'Custom Plan',
-      yearlyPrice: 'Custom Plan',
-      period: 'per month',
+      name: "Enterprise",
+      price: "Custom Plan",
+      yearlyPrice: "Custom Plan",
+      period: "per month",
       features: [
-        'Everything in Professional',
-        'Custom solutions',
-        'Dedicated account manager',
-        '1-hour support response time',
-        'SSO Authentication',
-        'Advanced security',
-        'Custom contracts',
-        'SLA agreement',
+        "Everything in Professional",
+        "Custom solutions",
+        "Dedicated account manager",
+        "1-hour support response time",
+        "SSO Authentication",
+        "Advanced security",
+        "Custom contracts",
+        "SLA agreement",
       ],
-      description: 'For large organizations with specific needs',
+      description: "For large organizations with specific needs",
       isPopular: false,
       multiButton: true,
       buttons: [
         {
-          text: 'Schedule a Meet',
+          text: "Schedule a Meet",
           onClick: onScheduleMeetClick,
           primary: true,
         },
         {
-          text: 'Get a Call',
+          text: "Get a Call",
           onClick: onContactSalesClick,
           primary: false,
         },
       ],
     },
-  ]
+  ];
   return (
     <div className="min-h-[800px] rounded-lg px-4 flex justify-center">
       <Pricing
@@ -153,11 +164,11 @@ function RouteComponent() {
         <DialogContent>
           <DialogHeader className="flex flex-col gap-5 ">
             <DialogTitle>Contact our team via</DialogTitle>
-            <Button variant={'secondary'}> Schedule a Meet </Button>
+            <Button variant={"secondary"}> Schedule a Meet </Button>
             <Button> Get a Call</Button>
           </DialogHeader>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
