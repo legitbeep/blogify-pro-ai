@@ -64,6 +64,7 @@ export default {
         rainbow: "rainbow var(--speed, 2s) infinite linear",
         "shiny-text": "shiny-text 8s infinite",
         aurora: "aurora 60s linear infinite",
+        gradient: "gradient 8s linear infinite",
       },
       keyframes: {
         rainbow: {
@@ -88,6 +89,11 @@ export default {
           },
           to: {
             backgroundPosition: "350% 50%, 350% 50%",
+          },
+        },
+        gradient: {
+          to: {
+            backgroundPosition: "var(--bg-size) 0",
           },
         },
       },

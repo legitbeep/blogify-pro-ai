@@ -10,6 +10,8 @@ import {
   PurchaseDialog,
   PurchaseDialogDemo,
 } from "@/components/modules/pricing/pricing-modal";
+import AnimatedGradientText from "@/components/ui/animated-gradient-text";
+import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
 // import { DefaultAreaChart } from "@/components/ui/graphs/area-graph/default";
@@ -19,9 +21,15 @@ import { Button } from "@/components/ui/button";
 // import { DefaultRadarGraph } from "@/components/ui/graphs/radar-graph/default";
 // import { DefaultRadialGraph } from "@/components/ui/graphs/radial-graph/default";
 import Particles from "@/components/ui/particles";
+import { cn, login } from "@/lib/utils";
 import { useThemeStore } from "@/store/useThemeStore";
-import { createFileRoute } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  ArrowRight,
+  ArrowRightIcon,
+  ChevronRight,
+  Loader2,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_unauth/")({
@@ -50,12 +58,19 @@ function RouteComponent() {
   const [orderLoading, setOrderLoading] = useState(false);
   const razorpayObj = useRazorpay();
   const [showChat, setShowChat] = useState(false);
+  const navigate = useNavigate();
 
   const { initiatePayment, isLoading } = razorpayObj;
 
   useEffect(() => {
     setColor(theme === "light" ? "#000" : "#fff");
   }, [theme]);
+
+  const onPricingClick = () => {
+    navigate({
+      to: "/pricing",
+    });
+  };
 
   const handlePayment = async () => {
     setOrderLoading(true);
@@ -94,7 +109,20 @@ function RouteComponent() {
         <div className="container w-full flex-grow flex flex-col md:flex-row items-start justify-between py-8 md:py-14">
           <div className="w-full md:w-1/2 order-2 md:order-1 mt-auto md:mt-0">
             <div className="text-center md:text-left space-y-6 md:absolute md:bottom-14 md:left-14">
-              <h1 className="bg-gradient-to-br text-transparent dark:from-white from-black/80 from-40% dark:to-black/100 to-orange-700 bg-clip-text text-3xl font-bold leading-none text-balance sm:text-6xl md:text-7xl lg:text-8xl animate-fade-in">
+              <div className="w-auto md:max-w-[300px] flex items-center justify-center md:justify-start">
+                <AnimatedGradientText>
+                  ✨ <hr className="mx-2 h-4 w-px shrink-0 bg-gray-300" />{" "}
+                  <span
+                    className={cn(
+                      `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`
+                    )}
+                  >
+                    Introducing New Ai
+                  </span>
+                  <ChevronRight className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
+                </AnimatedGradientText>
+              </div>
+              <h1 className="bg-gradient-to-br leading-none text-transparent dark:from-white from-black/80 from-40% dark:to-black/30 to-orange-700 bg-clip-text text-3xl font-bold text-balance sm:text-6xl md:text-7xl lg:text-8xl animate-fade-in">
                 New AI is the way to analyze social data.
               </h1>
               <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
@@ -104,7 +132,7 @@ function RouteComponent() {
                 audience.
               </p>
               <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center md:justify-start">
-                <Button
+                {/* <Button
                   disabled={isLoading || orderLoading}
                   size="lg"
                   className="h-11"
@@ -122,7 +150,23 @@ function RouteComponent() {
                   onClose={razorpayObj?.resetPayment}
                   onAction={handlePaymentModalAction}
                   isSuccess={razorpayObj?.isSuccess}
-                />
+                /> */}
+                <Button
+                  size="lg"
+                  className="h-11 group relative"
+                  onClick={() => console.log("Button clicked")}
+                >
+                  Get Started
+                  <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-200 ease-in-out group-hover:translate-x-4" />
+                </Button>
+                <Button
+                  size="lg"
+                  className="h-11"
+                  variant={"secondary"}
+                  onClick={onPricingClick}
+                >
+                  Pricing Details
+                </Button>
               </div>
             </div>
           </div>

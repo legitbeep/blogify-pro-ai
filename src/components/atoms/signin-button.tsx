@@ -8,7 +8,11 @@ const SigninButton = ({ children }: PropsWithChildren) => {
     window.location.href = AUTH_URL;
   };
 
-  return <Button onClick={onLoginClick}>{children}</Button>;
+  return (
+    <Button onClick={onLoginClick} className="w-full">
+      {children}
+    </Button>
+  );
 };
 
 export default SigninButton;

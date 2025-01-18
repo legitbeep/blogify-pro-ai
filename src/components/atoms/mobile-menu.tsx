@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { deleteCookie, login } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -58,22 +58,21 @@ export function MobileMenu() {
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="top" className="h-[100dvh] w-full">
+      <SheetContent side="top" className="h-[100dvh] w-full [&>button]:hidden">
         <div className="flex items-center justify-between mb-8">
-          <Link
-            to="/"
-            className="text-xl font-bold"
-            onClick={() => setOpen(false)}
-          >
+          <Link to="/" className="text-xl " onClick={() => setOpen(false)}>
             New AI
           </Link>
+          <button onClick={() => setOpen(false)} className="p-2 rounded-full">
+            <X className="h-4 w-4" />
+          </button>
         </div>
-        <nav className="flex flex-col space-y-4">
+        <nav className="flex flex-col ">
           {links.map((link) => (
             <button
               key={link.label}
               onClick={() => onLinkClick(link)}
-              className="bg-transparent border-none text-left text-2xl py-2 hover:text-primary transition-colors max-w-full text-ellipsis overflow-hidden"
+              className="bg-transparent border-b text-left text-2xl py-4 hover:text-primary transition-colors max-w-full text-ellipsis overflow-hidden"
             >
               {link.label}
             </button>

@@ -57,8 +57,8 @@ const ProfileIcon = ({ size = "md" }: { size?: sizeKey }) => {
       )}
     </button>
   ) : (
-    <div className="hidden md:flex items-center space-x-4">
-      <SigninButton>Get Started</SigninButton>
+    <div className="hidden md:flex items-center space-x-4 w-full">
+      <SigninButton>Login</SigninButton>
     </div>
   );
 };

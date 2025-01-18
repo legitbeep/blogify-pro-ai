@@ -5,6 +5,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import { toast } from "sonner";
 
 // Types
 export interface ErrorResponse {
@@ -12,7 +13,6 @@ export interface ErrorResponse {
   status: number;
 }
 
-// Define a type for expected error response data
 export interface ApiErrorData {
   message: string;
   [key: string]: unknown;
@@ -38,65 +38,96 @@ api.interceptors.request.use(
     return config;
   },
   (error: AxiosError) => {
+    console.error("Request interceptor error:", error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor
+const handleUnauthorized = (errorMessage = "Something went wrong") => {
+  const cookieExists = getTokenFromCookie("authtoken");
+  const isAuthRoute = window.location.pathname.includes("/dashboard");
+  if ((window.location.pathname !== "/" && !!cookieExists) || isAuthRoute) {
+    console.log("Handling unauthorized:", errorMessage);
+    deleteCookie("authToken");
+    router.navigate({
+      to: "/",
+      replace: true,
+    });
+    toast.error(errorMessage);
+  }
+};
+
+// Response interceptor with improved error handling
 api.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
   (error: AxiosError<ApiErrorData>) => {
-    const { response } = error;
+    console.error("Response interceptor caught error:", {
+      code: error.code,
+      message: error.message,
+      response: error.response,
+    });
 
-    if (response) {
-      // Handle different error status codes
-      switch (response.status) {
+    // Handle network errors first
+    if (error.code === "ERR_NETWORK" || !error.response) {
+      handleUnauthorized("Network error! Please check your connection.");
+      return Promise.reject(error);
+    }
+
+    // Handle response errors
+    if (error.response) {
+      switch (error.response.status) {
         case 401:
-          const cookieExists = getTokenFromCookie("authtoken");
-          if (window.location.pathname != "/" && !!cookieExists) {
-            deleteCookie("authToken");
-            // window.location.href = "/";
-            router.navigate({
-              to: "/",
-            });
-          }
+          handleUnauthorized("You have been logged out!");
           break;
         case 403:
-          // Handle forbidden
+          toast.error("Access forbidden! You don't have permission.");
           break;
         case 404:
-          // Handle not found
+          toast.error("Resource not found!");
           break;
         case 500:
-          // Handle server error
+          handleUnauthorized("Internal server error! Please try again later.");
+          break;
+        default:
+          toast.error(
+            error.response.data?.message || "An unexpected error occurred!"
+          );
           break;
       }
-    } else if (error.request) {
-      // Handle network errors
-      console.error("Network Error:", error.message);
     }
 
     return Promise.reject(error);
   }
 );
 
-// Helper methods
+// Enhanced error handler for specific use cases
 const handleError = (error: AxiosError<ApiErrorData>): ErrorResponse => {
+  console.error("handleError called with:", error);
+
+  // Handle network errors
+  if (error.code === "ERR_NETWORK") {
+    return {
+      message: "Network error! Please check your connection.",
+      status: 0, // Use 0 to indicate network error
+    };
+  }
+
+  // Handle response errors
   if (error.response) {
     return {
       message: error.response.data?.message || "An error occurred",
       status: error.response.status,
     };
   }
+
+  // Handle other types of errors
   return {
-    message: error.message || "Network error",
+    message: error.message || "An unexpected error occurred",
     status: 500,
   };
 };
 
-// Export instance and helpers
 export { api, handleError };
-
 export default api;

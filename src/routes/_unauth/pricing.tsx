@@ -3,7 +3,7 @@ import PaymentService from "@/api/services/paymentService";
 import { Pricing } from "@/components/modules/pricing/pricing";
 import { login } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -22,6 +22,37 @@ export const Route = createFileRoute("/_unauth/pricing")({
   component: RouteComponent,
 });
 
+import React from "react";
+
+const SpotlightContainer = ({ children }: PropsWithChildren) => {
+  return (
+    <div className="relative isolate overflow-hidden">
+      {/* Main container */}
+      <div className="min-h-[800px] rounded-lg px-4 flex justify-center relative">
+        {/* Spotlight gradient overlay */}
+        <div className="absolute inset-0 -z-10">
+          <div
+            className="absolute inset-x-0 -top-40 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+            aria-hidden="true"
+          >
+            <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-orange-500 to-yellow-300 dark:from-white/80 dark:to-white/10 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
+          </div>
+
+          <div
+            className="absolute inset-x-0 top-[calc(100%-13rem)] transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+            aria-hidden="true"
+          >
+            <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-orange-500 to-yellow-300 dark:from-white/80 dark:to-white/10 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="relative">{children}</div>
+      </div>
+    </div>
+  );
+};
+
 function RouteComponent() {
   const isLoggedIn = true;
   const razorpayObj = useRazorpay();
@@ -37,11 +68,15 @@ function RouteComponent() {
     if (isLoggedIn) {
       toast.message("Already activated!");
     } else {
-      login();
+      toast.error("Please login to continue!");
     }
   };
 
   const onProPlanClick = async (isMonthly: boolean) => {
+    if (!isLoggedIn) {
+      toast.error("Please login to continue!");
+      return;
+    }
     setPaymentLoading(true);
     try {
       const user = {
@@ -154,7 +189,8 @@ function RouteComponent() {
     },
   ];
   return (
-    <div className="min-h-[800px] rounded-lg px-4 flex justify-center">
+    // <div className="min-h-[800px] rounded-lg px-4 flex justify-center">
+    <SpotlightContainer>
       <Pricing
         plans={demoPlans}
         title="New AI Simple, Transparent Pricing"
@@ -169,6 +205,7 @@ function RouteComponent() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-    </div>
+    </SpotlightContainer>
+    // </div>
   );
 }
