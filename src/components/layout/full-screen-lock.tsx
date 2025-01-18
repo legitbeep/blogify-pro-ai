@@ -4,12 +4,14 @@ import { PropsWithChildren, useEffect, useState } from "react";
 
 const FullScreenLock = ({ children }: PropsWithChildren) => {
   const [password, setPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
     const isAuthenticated = getTokenFromCookie("isAuthenticated");
     if (isAuthenticated && isAuthenticated === "true") {
       setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
   }, []);
 

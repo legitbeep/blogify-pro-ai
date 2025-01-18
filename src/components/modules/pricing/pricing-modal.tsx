@@ -53,24 +53,20 @@ export function PurchaseDialog({
             <>
               <Sparkles className="h-16 w-16 text-primary mb-4" />
               <h3 className="text-2xl font-semibold text-primary mb-2">
-                Welcome to Premium AI!
+                Welcome to Blogify Pro!
               </h3>
               <p className="text-muted-foreground mb-4">
-                You now have access to all our advanced features and priority
-                support.
+                You can now generate 5 more blogs using our AI tool. Here are a
+                few features you can enjoy:
               </p>
               <ul className="text-left text-sm space-y-2 mb-4">
                 <li className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" />{" "}
-                  Unlimited AI generations
+                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> AI
+                  Transciptions from audio, video and pdf files
                 </li>
                 <li className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" />{" "}
-                  Advanced customization options
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" />{" "}
-                  Priority customer support
+                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> AI
+                  Translation supporting 10 languages
                 </li>
               </ul>
             </>
