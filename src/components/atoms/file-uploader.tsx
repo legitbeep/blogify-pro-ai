@@ -31,9 +31,12 @@ export function FileUploader() {
       </DialogTrigger> */}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Upload File</DialogTitle>
-          <DialogDescription>
-            Choose a file type to upload or record.
+          <DialogTitle className="text-2xl font-bold">
+            Select file to upload
+          </DialogTitle>
+          <DialogDescription className="text-gray-500">
+            Choose the type of file you want to upload and proceed with the
+            upload process.
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="video" className="w-full">
@@ -43,16 +46,16 @@ export function FileUploader() {
             <TabsTrigger value="file">File</TabsTrigger>
             <TabsTrigger value="text">Text</TabsTrigger>
           </TabsList>
-          <TabsContent value="video">
+          <TabsContent value="video" className="mt-4">
             <VideoUploader onUploadComplete={handleUploadComplete} />
           </TabsContent>
-          <TabsContent value="audio">
+          <TabsContent value="audio" className="mt-4">
             <AudioUploader onUploadComplete={handleUploadComplete} />
           </TabsContent>
-          <TabsContent value="file">
+          <TabsContent value="file" className="mt-4">
             <GenericFileUploader onUploadComplete={handleUploadComplete} />
           </TabsContent>
-          <TabsContent value="text">
+          <TabsContent value="text" className="mt-4">
             <TextInput onUploadComplete={handleUploadComplete} />
           </TabsContent>
         </Tabs>

@@ -57,7 +57,7 @@ export function GenericFileUploader({
         className="hidden"
         id="file-upload"
       />
-      <Button asChild>
+      <Button asChild className="w-full">
         <label htmlFor="file-upload">Upload File (TXT or PDF)</label>
       </Button>
       {uploadStatus && (

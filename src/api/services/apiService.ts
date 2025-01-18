@@ -1,19 +1,33 @@
 import { AxiosError } from "axios";
 import api, { ApiErrorData, handleError } from "../axios";
+import { CONSTANTS, getKeyFromLocalStorage } from "@/lib/utils";
 
 export const apiService = {
   async get<T>(url: string) {
     try {
-      const response = await api.get<T>(url);
+      const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
+      console.log({ token });
+      const response = await api.get<T>(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       throw handleError(error as AxiosError<ApiErrorData>);
     }
   },
 
-  async post<T>(url: string, data: unknown) {
+  async post<T>(url: string, data: any) {
     try {
-      const response = await api.post<T>(url, data);
+      const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
+      const response = await api.post<T>(url, {
+        ...(data || {}),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...(data?.headers || {}),
+        },
+      });
       return response.data;
     } catch (error) {
       throw handleError(error as AxiosError<ApiErrorData>);

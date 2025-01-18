@@ -36,6 +36,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
+    // log request api
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -50,13 +51,12 @@ api.interceptors.request.use(
 const handleUnauthorized = (errorMessage = "Something went wrong") => {
   const cookieExists = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
   const isAuthRoute = window.location.pathname.includes("/dashboard");
-  if ((window.location.pathname !== "/" && !!cookieExists) || isAuthRoute) {
-    console.log("Handling unauthorized:", errorMessage);
-    deleteKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
-    router.navigate({
-      to: "/",
-      replace: true,
-    });
+  if (window.location.pathname !== "/" && !!cookieExists) {
+    // deleteKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
+    // router.navigate({
+    //   to: "/",
+    //   replace: true,
+    // });
     toast.error(errorMessage);
   }
 };
@@ -83,7 +83,8 @@ api.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          handleUnauthorized("You have been logged out!");
+          toast.error("Unauthorized! Please login again.");
+          // handleUnauthorized("You have been logged out!");
           break;
         case 403:
           toast.error("Access forbidden! You don't have permission.");
@@ -92,7 +93,8 @@ api.interceptors.response.use(
           toast.error("Resource not found!");
           break;
         case 500:
-          handleUnauthorized("Internal server error! Please try again later.");
+          toast.error("Internal server error! Please try again later.");
+          // handleUnauthorized("Internal server error! Please try again later.");
           break;
         default:
           toast.error(
