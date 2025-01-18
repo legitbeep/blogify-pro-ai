@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import PhoneDialog from "@/components/atoms/phone-number";
+import { useQuery } from "@tanstack/react-query";
+import AuthService from "@/api/services/authService";
 
 export const Route = createFileRoute("/_unauth/pricing")({
   component: RouteComponent,
@@ -37,6 +39,12 @@ function RouteComponent() {
     setDialogOpen(true);
   };
 
+  const userQuery = useQuery({
+    queryKey: AuthService.queryKeys.getUser(),
+    queryFn: AuthService.getUser,
+    staleTime: Infinity,
+  });
+
   const onFreePlanClick = () => {
     if (isLoggedIn) {
       toast.message("Already activated!");
@@ -49,9 +57,12 @@ function RouteComponent() {
     setPaymentLoading(true);
     try {
       const user = {
-        name: "John Doe",
-        email: "johndoe@gmail.com",
+        name: userQuery?.data?.name || "",
+        email: userQuery?.data?.email || "",
       };
+      if (!user.name || !user.email) {
+        throw new Error("User details not found");
+      }
       const res = await PaymentService.createOrder({
         amount: isMonthly ? 999 : 9999,
         customer_details: user,
@@ -84,8 +95,8 @@ function RouteComponent() {
   const demoPlans = [
     {
       name: "Free Trial",
-      price: "0",
-      yearlyPrice: "00",
+      price: "Free",
+      yearlyPrice: "Free",
       period: "per month",
       features: [
         "Up to 10 projects",

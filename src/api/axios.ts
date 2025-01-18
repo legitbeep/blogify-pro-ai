@@ -1,4 +1,5 @@
 import { deleteCookie, getTokenFromCookie } from "@/lib/utils";
+import { router } from "@/main";
 import axios, {
   AxiosError,
   AxiosResponse,
@@ -31,7 +32,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getTokenFromCookie("authtoken");
-    console.log({ token });
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -57,7 +57,10 @@ api.interceptors.response.use(
           const cookieExists = getTokenFromCookie("authtoken");
           if (window.location.pathname != "/" && !!cookieExists) {
             deleteCookie("authToken");
-            window.location.href = "/";
+            // window.location.href = "/";
+            router.navigate({
+              to: "/",
+            });
           }
           break;
         case 403:

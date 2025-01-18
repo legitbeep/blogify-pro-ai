@@ -26,7 +26,6 @@ export const getTokenFromCookie = (key: string) => {
     const tokenCookie = cookies.find((cookie) =>
       cookie.trim().startsWith(`${key}=`)
     );
-    console.log({ tokenCookie, key });
     if (!tokenCookie) return null;
     return tokenCookie.split(`${key}=`)[1];
   } catch (error) {
@@ -51,4 +50,17 @@ export const deleteCookie = (cookieName: string): boolean => {
   document.cookie = cookieValue;
 
   return true;
+};
+
+// create a function to set a cookie with a given name and value
+export const setCookie = (name: string, value: string, days: number) => {
+  // calculate the expiration date
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+
+  // build the set-cookie string
+  const cookieValue = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+
+  // set the cookie
+  document.cookie = cookieValue;
 };
