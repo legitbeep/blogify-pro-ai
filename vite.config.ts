@@ -10,4 +10,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress specific warnings
+        if (warning.code === "UNUSED_EXTERNAL_IMPORT") return;
+        if (warning.code === "THIS_IS_UNDEFINED") return;
+
+        // Log other warnings
+        warn(warning);
+      },
+    },
+  },
 });
