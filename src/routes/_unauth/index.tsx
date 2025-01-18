@@ -46,6 +46,7 @@ function RouteComponent() {
   const [color, setColor] = React.useState(theme === "light" ? "#000" : "#fff");
   const [orderLoading, setOrderLoading] = useState(false);
   const { initiatePayment, isLoading } = useRazorpay();
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     setColor(theme === "light" ? "#000" : "#fff");
@@ -106,7 +107,7 @@ function RouteComponent() {
                     "Random Payment"
                   )}
                 </Button>
-                <ChatModal />
+                <ChatModal open={showChat} setOpen={setShowChat} />
                 <PurchaseDialogDemo />
               </div>
             </div>

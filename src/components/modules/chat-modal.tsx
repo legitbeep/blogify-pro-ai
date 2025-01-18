@@ -3,7 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Mic, Send, Pause, Paperclip, Play, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { LiveAudioVisualizer } from "react-audio-visualize";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
@@ -13,6 +18,7 @@ import ImageUpload from "../atoms/image-upload";
 import UploadService from "@/api/services/uploadService";
 import axios from "axios";
 import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface ChatMessage {
   id: string;
@@ -30,7 +36,21 @@ interface MediaRecorderWithData extends MediaRecorder {
   onresume: () => void;
 }
 
-const ChatModal = () => {
+interface ChatModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  options?: {
+    showCta?: boolean;
+    ctaText?: string;
+  };
+}
+
+const ChatModal = ({
+  open = false,
+  setOpen = () => {},
+  options,
+}: ChatModalProps) => {
+  const { showCta = true, ctaText = "Explore AI" } = options || {};
   const { theme } = useThemeStore();
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -564,22 +584,35 @@ const ChatModal = () => {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Button size="lg" variant="secondary" className="h-11 w-full">
-          Explore AI
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="h-[100dvh] md:h-[80vh] max-w-2xl p-0">
+    <Dialog open={open} onOpenChange={setOpen}>
+      {!!showCta && (
+        <DialogTrigger>
+          <Button size="lg" variant="secondary" className="h-11 w-full">
+            {ctaText}
+          </Button>
+        </DialogTrigger>
+      )}
+      <DialogContent className="[&>button]:hidden h-[100dvh] md:h-[80vh] max-w-2xl p-0">
         <Card className="flex flex-col h-full w-full bg-background border-border">
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[calc(100dvh-4rem)] md:max-h-[calc(80vh-4rem)]">
+          <DialogHeader className="relative border-b h-10 flex justify-center mx-4">
+            <DialogTitle></DialogTitle>
+
+            {/* Custom close button positioned in the top-right */}
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute right-0 top-0 p-2 rounded-full"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto p-4 space-y-2 max-h-[calc(100dvh-4rem)] md:max-h-[calc(80vh-4rem)]">
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex ${msg.user_type === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[70%] rounded-lg p-3 ${
+                  className={`max-w-[70%] rounded-lg px-3 py-1 flex items-center min-h-10 ${
                     msg.user_type === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
