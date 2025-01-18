@@ -61,7 +61,7 @@ export function MobileMenu() {
       <SheetContent side="top" className="h-[100dvh] w-full [&>button]:hidden">
         <div className="flex items-center justify-between mb-8">
           <Link to="/" className="text-xl " onClick={() => setOpen(false)}>
-            New AI
+            Blogify Pro
           </Link>
           <button onClick={() => setOpen(false)} className="p-2 rounded-full">
             <X className="h-4 w-4" />

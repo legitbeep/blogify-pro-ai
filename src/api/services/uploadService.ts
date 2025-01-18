@@ -16,6 +16,8 @@ class UploadService {
   ): Promise<GetPresignedUrlResponse> {
     return apiService.post("/pre-signed", data);
   }
+  static async uploadAudio(blob: Blob) {}
+  static async uploadFile(blob: File) {}
 }
 
 export default UploadService;

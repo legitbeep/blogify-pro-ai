@@ -10,213 +10,235 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as UnauthImport } from './routes/_unauth'
-import { Route as AuthImport } from './routes/_auth'
-import { Route as UnauthIndexImport } from './routes/_unauth/index'
-import { Route as UnauthPricingImport } from './routes/_unauth/pricing'
-import { Route as AuthDashboardIndexImport } from './routes/_auth/dashboard/index'
-import { Route as AuthDashboardProfileImport } from './routes/_auth/dashboard/profile'
-import { Route as AuthDashboardAnalyticsImport } from './routes/_auth/dashboard/analytics'
+import { Route as rootRoute } from "./routes/__root";
+import { Route as UnauthImport } from "./routes/_unauth";
+import { Route as AuthImport } from "./routes/_auth";
+import { Route as UnauthIndexImport } from "./routes/_unauth/index";
+import { Route as UnauthPricingImport } from "./routes/_unauth/pricing";
+import { Route as AuthDashboardIndexImport } from "./routes/_auth/dashboard/index";
+import { Route as AuthDashboardProfileImport } from "./routes/_auth/dashboard/profile";
+import { Route as AuthDashboardAnalyticsImport } from "./routes/_auth/dashboard/analytics";
+import { Route as AuthDashboardChatChatIdImport } from "./routes/_auth/dashboard/chat/$chatId";
 
 // Create/Update Routes
 
 const UnauthRoute = UnauthImport.update({
-  id: '/_unauth',
+  id: "/_unauth",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const AuthRoute = AuthImport.update({
-  id: '/_auth',
+  id: "/_auth",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const UnauthIndexRoute = UnauthIndexImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => UnauthRoute,
-} as any)
+} as any);
 
 const UnauthPricingRoute = UnauthPricingImport.update({
-  id: '/pricing',
-  path: '/pricing',
+  id: "/pricing",
+  path: "/pricing",
   getParentRoute: () => UnauthRoute,
-} as any)
+} as any);
 
 const AuthDashboardIndexRoute = AuthDashboardIndexImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
+  id: "/dashboard/",
+  path: "/dashboard/",
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 
 const AuthDashboardProfileRoute = AuthDashboardProfileImport.update({
-  id: '/dashboard/profile',
-  path: '/dashboard/profile',
+  id: "/dashboard/profile",
+  path: "/dashboard/profile",
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 
 const AuthDashboardAnalyticsRoute = AuthDashboardAnalyticsImport.update({
-  id: '/dashboard/analytics',
-  path: '/dashboard/analytics',
+  id: "/dashboard/analytics",
+  path: "/dashboard/analytics",
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
+
+const AuthDashboardChatChatIdRoute = AuthDashboardChatChatIdImport.update({
+  id: "/dashboard/chat/$chatId",
+  path: "/dashboard/chat/$chatId",
+  getParentRoute: () => AuthRoute,
+} as any);
 
 // Populate the FileRoutesByPath interface
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthImport
-      parentRoute: typeof rootRoute
-    }
-    '/_unauth': {
-      id: '/_unauth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof UnauthImport
-      parentRoute: typeof rootRoute
-    }
-    '/_unauth/pricing': {
-      id: '/_unauth/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof UnauthPricingImport
-      parentRoute: typeof UnauthImport
-    }
-    '/_unauth/': {
-      id: '/_unauth/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof UnauthIndexImport
-      parentRoute: typeof UnauthImport
-    }
-    '/_auth/dashboard/analytics': {
-      id: '/_auth/dashboard/analytics'
-      path: '/dashboard/analytics'
-      fullPath: '/dashboard/analytics'
-      preLoaderRoute: typeof AuthDashboardAnalyticsImport
-      parentRoute: typeof AuthImport
-    }
-    '/_auth/dashboard/profile': {
-      id: '/_auth/dashboard/profile'
-      path: '/dashboard/profile'
-      fullPath: '/dashboard/profile'
-      preLoaderRoute: typeof AuthDashboardProfileImport
-      parentRoute: typeof AuthImport
-    }
-    '/_auth/dashboard/': {
-      id: '/_auth/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthDashboardIndexImport
-      parentRoute: typeof AuthImport
-    }
+    "/_auth": {
+      id: "/_auth";
+      path: "";
+      fullPath: "";
+      preLoaderRoute: typeof AuthImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/_unauth": {
+      id: "/_unauth";
+      path: "";
+      fullPath: "";
+      preLoaderRoute: typeof UnauthImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/_unauth/pricing": {
+      id: "/_unauth/pricing";
+      path: "/pricing";
+      fullPath: "/pricing";
+      preLoaderRoute: typeof UnauthPricingImport;
+      parentRoute: typeof UnauthImport;
+    };
+    "/_unauth/": {
+      id: "/_unauth/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof UnauthIndexImport;
+      parentRoute: typeof UnauthImport;
+    };
+    "/_auth/dashboard/analytics": {
+      id: "/_auth/dashboard/analytics";
+      path: "/dashboard/analytics";
+      fullPath: "/dashboard/analytics";
+      preLoaderRoute: typeof AuthDashboardAnalyticsImport;
+      parentRoute: typeof AuthImport;
+    };
+    "/_auth/dashboard/profile": {
+      id: "/_auth/dashboard/profile";
+      path: "/dashboard/profile";
+      fullPath: "/dashboard/profile";
+      preLoaderRoute: typeof AuthDashboardProfileImport;
+      parentRoute: typeof AuthImport;
+    };
+    "/_auth/dashboard/": {
+      id: "/_auth/dashboard/";
+      path: "/dashboard";
+      fullPath: "/dashboard";
+      preLoaderRoute: typeof AuthDashboardIndexImport;
+      parentRoute: typeof AuthImport;
+    };
+    "/_auth/dashboard/chat/$chatId": {
+      id: "/_auth/dashboard/chat/$chatId";
+      path: "/dashboard/chat/$chatId";
+      fullPath: "/dashboard/chat/$chatId";
+      preLoaderRoute: typeof AuthDashboardChatChatIdImport;
+      parentRoute: typeof AuthImport;
+    };
   }
 }
 
 // Create and export the route tree
 
 interface AuthRouteChildren {
-  AuthDashboardAnalyticsRoute: typeof AuthDashboardAnalyticsRoute
-  AuthDashboardProfileRoute: typeof AuthDashboardProfileRoute
-  AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
+  AuthDashboardAnalyticsRoute: typeof AuthDashboardAnalyticsRoute;
+  AuthDashboardProfileRoute: typeof AuthDashboardProfileRoute;
+  AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute;
+  AuthDashboardChatChatIdRoute: typeof AuthDashboardChatChatIdRoute;
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardAnalyticsRoute: AuthDashboardAnalyticsRoute,
   AuthDashboardProfileRoute: AuthDashboardProfileRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
-}
+  AuthDashboardChatChatIdRoute: AuthDashboardChatChatIdRoute,
+};
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
 
 interface UnauthRouteChildren {
-  UnauthPricingRoute: typeof UnauthPricingRoute
-  UnauthIndexRoute: typeof UnauthIndexRoute
+  UnauthPricingRoute: typeof UnauthPricingRoute;
+  UnauthIndexRoute: typeof UnauthIndexRoute;
 }
 
 const UnauthRouteChildren: UnauthRouteChildren = {
   UnauthPricingRoute: UnauthPricingRoute,
   UnauthIndexRoute: UnauthIndexRoute,
-}
+};
 
 const UnauthRouteWithChildren =
-  UnauthRoute._addFileChildren(UnauthRouteChildren)
+  UnauthRoute._addFileChildren(UnauthRouteChildren);
 
 export interface FileRoutesByFullPath {
-  '': typeof UnauthRouteWithChildren
-  '/pricing': typeof UnauthPricingRoute
-  '/': typeof UnauthIndexRoute
-  '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
-  '/dashboard/profile': typeof AuthDashboardProfileRoute
-  '/dashboard': typeof AuthDashboardIndexRoute
+  "": typeof UnauthRouteWithChildren;
+  "/pricing": typeof UnauthPricingRoute;
+  "/": typeof UnauthIndexRoute;
+  "/dashboard/analytics": typeof AuthDashboardAnalyticsRoute;
+  "/dashboard/profile": typeof AuthDashboardProfileRoute;
+  "/dashboard": typeof AuthDashboardIndexRoute;
+  "/dashboard/chat/$chatId": typeof AuthDashboardChatChatIdRoute;
 }
 
 export interface FileRoutesByTo {
-  '': typeof AuthRouteWithChildren
-  '/pricing': typeof UnauthPricingRoute
-  '/': typeof UnauthIndexRoute
-  '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
-  '/dashboard/profile': typeof AuthDashboardProfileRoute
-  '/dashboard': typeof AuthDashboardIndexRoute
+  "": typeof AuthRouteWithChildren;
+  "/pricing": typeof UnauthPricingRoute;
+  "/": typeof UnauthIndexRoute;
+  "/dashboard/analytics": typeof AuthDashboardAnalyticsRoute;
+  "/dashboard/profile": typeof AuthDashboardProfileRoute;
+  "/dashboard": typeof AuthDashboardIndexRoute;
+  "/dashboard/chat/$chatId": typeof AuthDashboardChatChatIdRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_auth': typeof AuthRouteWithChildren
-  '/_unauth': typeof UnauthRouteWithChildren
-  '/_unauth/pricing': typeof UnauthPricingRoute
-  '/_unauth/': typeof UnauthIndexRoute
-  '/_auth/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
-  '/_auth/dashboard/profile': typeof AuthDashboardProfileRoute
-  '/_auth/dashboard/': typeof AuthDashboardIndexRoute
+  __root__: typeof rootRoute;
+  "/_auth": typeof AuthRouteWithChildren;
+  "/_unauth": typeof UnauthRouteWithChildren;
+  "/_unauth/pricing": typeof UnauthPricingRoute;
+  "/_unauth/": typeof UnauthIndexRoute;
+  "/_auth/dashboard/analytics": typeof AuthDashboardAnalyticsRoute;
+  "/_auth/dashboard/profile": typeof AuthDashboardProfileRoute;
+  "/_auth/dashboard/": typeof AuthDashboardIndexRoute;
+  "/_auth/dashboard/chat/$chatId": typeof AuthDashboardChatChatIdRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | ''
-    | '/pricing'
-    | '/'
-    | '/dashboard/analytics'
-    | '/dashboard/profile'
-    | '/dashboard'
-  fileRoutesByTo: FileRoutesByTo
+    | ""
+    | "/pricing"
+    | "/"
+    | "/dashboard/analytics"
+    | "/dashboard/profile"
+    | "/dashboard"
+    | "/dashboard/chat/$chatId";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | ''
-    | '/pricing'
-    | '/'
-    | '/dashboard/analytics'
-    | '/dashboard/profile'
-    | '/dashboard'
+    | ""
+    | "/pricing"
+    | "/"
+    | "/dashboard/analytics"
+    | "/dashboard/profile"
+    | "/dashboard"
+    | "/dashboard/chat/$chatId";
   id:
-    | '__root__'
-    | '/_auth'
-    | '/_unauth'
-    | '/_unauth/pricing'
-    | '/_unauth/'
-    | '/_auth/dashboard/analytics'
-    | '/_auth/dashboard/profile'
-    | '/_auth/dashboard/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/_auth"
+    | "/_unauth"
+    | "/_unauth/pricing"
+    | "/_unauth/"
+    | "/_auth/dashboard/analytics"
+    | "/_auth/dashboard/profile"
+    | "/_auth/dashboard/"
+    | "/_auth/dashboard/chat/$chatId";
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren
-  UnauthRoute: typeof UnauthRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren;
+  UnauthRoute: typeof UnauthRouteWithChildren;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   UnauthRoute: UnauthRouteWithChildren,
-}
+};
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {
@@ -233,7 +255,8 @@ export const routeTree = rootRoute
       "children": [
         "/_auth/dashboard/analytics",
         "/_auth/dashboard/profile",
-        "/_auth/dashboard/"
+        "/_auth/dashboard/",
+        "/_auth/dashboard/chat/$chatId"
       ]
     },
     "/_unauth": {
@@ -261,6 +284,10 @@ export const routeTree = rootRoute
     },
     "/_auth/dashboard/": {
       "filePath": "_auth/dashboard/index.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/dashboard/chat/$chatId": {
+      "filePath": "_auth/dashboard/chat/$chatId.tsx",
       "parent": "/_auth"
     }
   }

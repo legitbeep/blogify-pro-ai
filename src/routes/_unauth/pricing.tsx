@@ -201,7 +201,7 @@ function RouteComponent() {
     <SpotlightContainer>
       <Pricing
         plans={demoPlans}
-        title="New AI Simple, Transparent Pricing"
+        title="Blogify Pro Simple, Transparent Pricing"
         description="Choose the plan that works for you\nAll plans include access to our platform, lead generation tools, and dedicated support."
       />
       <PhoneDialog
