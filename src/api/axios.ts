@@ -1,3 +1,4 @@
+import { deleteCookie, getTokenFromCookie } from "@/lib/utils";
 import axios, {
   AxiosError,
   AxiosResponse,
@@ -22,13 +23,15 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "69420",
   },
 });
 
 // Request interceptor
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem("token");
+    const token = getTokenFromCookie("authToken");
+    console.log({ token });
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -51,9 +54,11 @@ api.interceptors.response.use(
       // Handle different error status codes
       switch (response.status) {
         case 401:
-          // Handle unauthorized
-          localStorage.removeItem("token");
-          window.location.href = "/login";
+          if (window.location.pathname != "/") {
+            // Handle unauthorized
+            deleteCookie("authToken");
+            window.location.href = "/";
+          }
           break;
         case 403:
           // Handle forbidden

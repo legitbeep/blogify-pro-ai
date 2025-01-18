@@ -19,3 +19,35 @@ export const login = () => {
   const AUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/authorize`;
   window.location.href = AUTH_URL;
 };
+
+export const getTokenFromCookie = (key: string) => {
+  try {
+    const cookies = document.cookie.split(";");
+    const tokenCookie = cookies.find((cookie) =>
+      cookie.trim().startsWith(`${key}=`)
+    );
+    if (!tokenCookie) return null;
+    return tokenCookie.split(`${key}=`)[1];
+  } catch (error) {
+    console.error("Error extracting token from cookie:", error);
+    return null;
+  }
+};
+
+export const deleteCookie = (cookieName: string): boolean => {
+  // Check if cookie exists
+  const cookies = document.cookie.split(";");
+  const cookieExists = cookies.some((cookie) =>
+    cookie.trim().startsWith(`${cookieName}=`)
+  );
+
+  if (!cookieExists) {
+    return false;
+  }
+
+  // Build cookie string with past expiration
+  const cookieValue = `${cookieName}=;`;
+  document.cookie = cookieValue;
+
+  return true;
+};

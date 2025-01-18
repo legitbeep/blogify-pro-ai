@@ -33,7 +33,7 @@ const chartConfig = {
 
 export function DefaultAreaChart() {
   return (
-    <div className="w-1/2 h-1/2">
+    <div className="w-full h-full">
       <Card>
         <CardHeader>
           <CardTitle>Area Chart</CardTitle>

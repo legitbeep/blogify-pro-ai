@@ -240,9 +240,11 @@ export function Pricing({
                     plan.price
                   )}
                 </span>
-                <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
-                  / {isMonthly ? "month" : "year"}
-                </span>
+                {!isNaN(Number(plan.price)) ? (
+                  <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
+                    / {isMonthly ? "month" : "year"}
+                  </span>
+                ) : null}
               </div>
 
               <p className="text-xs leading-5 text-muted-foreground">

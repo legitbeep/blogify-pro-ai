@@ -1,17 +1,21 @@
-import * as React from "react";
+import AuthService from "@/api/services/authService";
+import { useQuery } from "@tanstack/react-query";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import AppLayout from "@/components/layout/app-layout";
+import * as React from "react";
 
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
 function RootComponent() {
+  const userQuery = useQuery({
+    queryKey: AuthService.queryKeys.getUser(),
+    queryFn: AuthService.getUser,
+    staleTime: Infinity,
+  });
   return (
     <React.Fragment>
-      <AppLayout>
-        <Outlet />
-      </AppLayout>
+      <Outlet />
     </React.Fragment>
   );
 }
