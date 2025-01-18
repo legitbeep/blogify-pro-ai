@@ -1,4 +1,5 @@
 import AuthService from "@/api/services/authService";
+import NotificationComponent from "@/components/atoms/notification";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import * as React from "react";
@@ -16,6 +17,7 @@ function RootComponent() {
   return (
     <React.Fragment>
       <Outlet />
+      <NotificationComponent />
     </React.Fragment>
   );
 }

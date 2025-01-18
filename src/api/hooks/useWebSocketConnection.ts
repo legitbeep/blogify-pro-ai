@@ -12,7 +12,7 @@ interface UseWebSocketDemoReturn {
 }
 
 const useWebSocketDemo = (
-  initialUrl: string = "wss://a781-103-255-37-152.ngrok-free.app/"
+  initialUrl: string = "wss://api.sma-backend.projects.krishnajalan.dev:25565/api"
 ): UseWebSocketDemoReturn => {
   const [socketUrl, setSocketUrl] = useState<string>(initialUrl);
   const [messageHistory, setMessageHistory] = useState<MessageEvent[]>([]);
