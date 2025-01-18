@@ -15,6 +15,7 @@ import {
   // DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import PhoneDialog from "@/components/atoms/phone-number";
 import { useQuery } from "@tanstack/react-query";
 import AuthService from "@/api/services/authService";
 
@@ -57,6 +58,17 @@ function RouteComponent() {
   const isLoggedIn = true;
   const razorpayObj = useRazorpay();
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handlePhoneSubmit = (phoneNumber: string) => {
+    console.log("Phone number submitted:", phoneNumber);
+    // Add your phone submission logic here
+    toast.success("We will call you shortly!");
+  };
+
+  const onContactSalesClick = () => {
+    setDialogOpen(true);
+  };
 
   const userQuery = useQuery({
     queryKey: AuthService.queryKeys.getUser(),
@@ -109,10 +121,6 @@ function RouteComponent() {
       toast.error("Something went wrong!");
     }
     setPaymentLoading(false);
-  };
-
-  const onContactSalesClick = () => {
-    window.location.href = "mailto:sales@company.com";
   };
 
   const onScheduleMeetClick = () => {
@@ -196,16 +204,11 @@ function RouteComponent() {
         title="New AI Simple, Transparent Pricing"
         description="Choose the plan that works for you\nAll plans include access to our platform, lead generation tools, and dedicated support."
       />
-      <Dialog open={false}>
-        <DialogContent>
-          <DialogHeader className="flex flex-col gap-5 ">
-            <DialogTitle>Contact our team via</DialogTitle>
-            <Button variant={"secondary"}> Schedule a Meet </Button>
-            <Button> Get a Call</Button>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <PhoneDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSubmit={handlePhoneSubmit}
+      />
     </SpotlightContainer>
-    // </div>
   );
 }
