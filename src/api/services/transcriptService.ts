@@ -1,3 +1,4 @@
+import api from "../axios";
 import { apiService } from "./apiService";
 
 interface TranscriptDataRequest {
@@ -15,11 +16,10 @@ class TranscriptService {
   static async getTranscriptData(
     data: TranscriptDataRequest
   ): Promise<TranscriptDataResponse> {
-    return apiService.post("/transcript", {
-      media_file_url:
-        "https://superlevelhack.s3.amazonaws.com/video/video_1737231482062.mp4",
-      media_format: "mp4",
-    });
+    return api.post(
+      "https://be61-36-255-8-53.ngrok-free.app/api/transcript",
+      data
+    );
   }
 }
 
