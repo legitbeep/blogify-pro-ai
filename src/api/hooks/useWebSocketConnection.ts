@@ -12,7 +12,7 @@ interface UseWebSocketDemoReturn {
 }
 
 const useWebSocketDemo = (
-  initialUrl: string = "wss://5851-106-219-169-36.ngrok-free.app/"
+  initialUrl: string = "wss://a781-103-255-37-152.ngrok-free.app/"
 ): UseWebSocketDemoReturn => {
   const [socketUrl, setSocketUrl] = useState<string>(initialUrl);
   const [messageHistory, setMessageHistory] = useState<MessageEvent[]>([]);
@@ -31,9 +31,10 @@ const useWebSocketDemo = (
   );
 
   const sendTestMessage = useCallback(
-    (data: string | object) => {
+    async (data: string | object) => {
       const message = typeof data === "object" ? JSON.stringify(data) : data;
-      sendMessage(message);
+      const response = await sendMessage(message);
+      return response;
     },
     [sendMessage]
   );

@@ -1,6 +1,8 @@
 import { useRazorpay } from "@/api/hooks/useRazorpay";
+import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 // import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 import PaymentService from "@/api/services/paymentService";
+import ImageUpload from "@/components/atoms/image-upload";
 // import GradientBackground from "@/components/atoms/gradient-bg";
 // import NotificationComponent from "@/components/atoms/notification";
 import ChatModal from "@/components/modules/chat-modal";
@@ -75,15 +77,6 @@ function RouteComponent() {
     }
     setOrderLoading(false);
   };
-
-  // const {
-  //   socketUrl,
-  //   messageHistory,
-  //   changeSocketUrl,
-  //   sendTestMessage,
-  //   connectionStatus,
-  //   lastMessage,
-  // } = useWebSocketDemo();
 
   // return (
   //   <>

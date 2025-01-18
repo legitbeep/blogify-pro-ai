@@ -9,13 +9,17 @@ import useSpeechToText from "@/hooks/useSpeechToText";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { toast } from "sonner";
 import { useThemeStore } from "@/store/useThemeStore";
+import ImageUpload from "../atoms/image-upload";
+import UploadService from "@/api/services/uploadService";
+import axios from "axios";
+import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
 
 interface ChatMessage {
   id: string;
-  content: string;
-  sender: "user" | "ai";
+  message: string;
+  user_type: "user" | "ai";
   timestamp: Date;
-  type: "text" | "audio";
+  type: "TEXT" | "AUDIO" | "IMAGE";
   audioUrl?: string;
 }
 
@@ -32,6 +36,11 @@ const ChatModal = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [message, setMessage] = useState("");
+  const [isAttachImage, setIsAttachImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] =
     useState<MediaRecorderWithData | null>(null);
@@ -53,30 +62,32 @@ const ChatModal = () => {
   });
   const textToSpeech = useTextToSpeech();
 
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      content: "Hello! How can I help you today?",
-      sender: "ai",
-      timestamp: new Date(),
-      type: "text",
-    },
-    {
-      id: "2",
-      content: "I have a question about React",
-      sender: "user",
-      timestamp: new Date(),
-      type: "text",
-    },
-    {
-      id: "3",
-      content:
-        "Sure, I'd be happy to help with React. What would you like to know?",
-      sender: "ai",
-      timestamp: new Date(),
-      type: "text",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  // const [messages, setMessages] = useState<ChatMessage[]>([
+  //   {
+  //     id: "1",
+  //     content: "Hello! How can I help you today?",
+  //     sender: "ai",
+  //     timestamp: new Date(),
+  //     type: "TEXT",
+  //   },
+  //   {
+  //     id: "2",
+  //     content: "I have a question about React",
+  //     sender: "user",
+  //     timestamp: new Date(),
+  //     type: "TEXT",
+  //   },
+  //   {
+  //     id: "3",
+  //     content:
+  //       "Sure, I'd be happy to help with React. What would you like to know?",
+  //     sender: "ai",
+  //     timestamp: new Date(),
+  //     type: "TEXT",
+  //   },
+  // ]);
 
   const mediaRecorderRef = useRef<MediaRecorderWithData | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -94,6 +105,43 @@ const ChatModal = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const {
+    socketUrl,
+    messageHistory,
+    changeSocketUrl,
+    sendTestMessage,
+    connectionStatus,
+    lastMessage,
+  } = useWebSocketDemo();
+
+  useEffect(() => {
+    lastMessage &&
+      setMessages((prev) => [...prev, JSON.parse(lastMessage.data)]);
+    lastMessage && console.log(JSON.parse(lastMessage.data), "last msg");
+  }, [lastMessage]);
+
+  // useEffect(() => {
+  //   console.log(messages, "new messages");
+  // }, [messages]);
+
+  const sendMessage = async (
+    message_type: "TEXT" | "AUDIO" | "IMAGE",
+    content?: string,
+    url?: string
+  ) => {
+    try {
+      const response = await sendTestMessage({
+        user_id: "e8205b45-28a6-4bf5-a05b-4528a6fbf53d",
+        message_type,
+        content,
+        url,
+      });
+      // console.log("Response received:", response);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
 
   const requestMicrophonePermission = async () => {
     try {
@@ -171,16 +219,16 @@ const ChatModal = () => {
         type: "audio/webm",
       });
       setVisualizerStream(null);
-      alert("STOPPED 1");
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
-          content: speechToText?.transcript || "Audio message",
+          message: speechToText?.transcript || "Audio message",
           sender: "user",
           timestamp: new Date(),
-          type: speechToText?.transcript ? "text" : "audio",
+          type: speechToText?.transcript ? "TEXT" : "AUDIO",
           audioUrl: URL.createObjectURL(audioBlob),
+          user_type: "user",
         },
       ]);
       speechToText.stopListening();
@@ -225,31 +273,136 @@ const ChatModal = () => {
     }
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (message.trim()) {
+  //     const newMessage: ChatMessage = {
+  //       id: Date.now().toString(),
+  //       content: message,
+  //       sender: "user",
+  //       timestamp: new Date(),
+  //       type: "text",
+  //     };
+  //     setMessages((prev) => [...prev, newMessage]);
+  //     setMessage("");
+
+  //     // Simulate AI response
+  //     setTimeout(() => {
+  //       const aiResponse: ChatMessage = {
+  //         id: (Date.now() + 1).toString(),
+  //         content: "This is a simulated AI response to your message.",
+  //         sender: "ai",
+  //         timestamp: new Date(),
+  //         type: "text",
+  //       };
+  //       setMessages((prev) => [...prev, aiResponse]);
+  //     }, 1000);
+  //   } else if (isRecording) {
+  //     // Stop the recording and wait for the data
+  //     if (
+  //       mediaRecorderRef.current &&
+  //       mediaRecorderRef.current.state !== "inactive"
+  //     ) {
+  //       return new Promise((resolve) => {
+  //         speechToText.stopListening();
+  //         mediaRecorderRef.current!.onstop = async () => {
+  //           const audioBlob = new Blob(audioChunksRef.current, {
+  //             type: "audio/webm",
+  //           });
+
+  //           // Create and add the audio message
+  //           const newMessage: ChatMessage = {
+  //             id: Date.now().toString(),
+  //             content: "Audio message",
+  //             sender: "user",
+  //             timestamp: new Date(),
+  //             type: "audio",
+  //             audioUrl: URL.createObjectURL(audioBlob),
+  //           };
+  //           setMessages((prev) => [...prev, newMessage]);
+
+  //           // Clean up
+  //           if (streamRef.current) {
+  //             streamRef.current.getTracks().forEach((track) => track.stop());
+  //             streamRef.current = null;
+  //           }
+  //           resetTimer();
+  //           setIsRecording(false);
+  //           setIsPaused(false);
+  //           audioChunksRef.current = [];
+  //           setMediaRecorder(null);
+  //           setVisualizerStream(null);
+
+  //           resolve(undefined);
+  //         };
+  //         mediaRecorderRef.current!.stop();
+  //       });
+  //     }
+  //   }
+  // };
+
+  const handleAudioUpload = async (audioBlob: Blob) => {
+    try {
+      setUploadProgress(0);
+      setUploadStatus("Uploading...");
+
+      // Get presigned URL for audio file
+      const uploadUrlResponse = await UploadService.getPresignedUrl({
+        file_name: "audio_message.webm", // You can name it dynamically based on timestamp or other logic
+        file_type: audioBlob.type,
+        file_path: "audio", // Set the file path to "audio"
+      });
+
+      const uploadUrl = uploadUrlResponse.presigned_url;
+
+      // Upload the file to S3
+      await axios.put(uploadUrl, audioBlob, {
+        headers: {
+          "Content-Type": audioBlob.type,
+        },
+        onUploadProgress: (progressEvent) => {
+          const progress =
+            progressEvent.total &&
+            Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          progress && setUploadProgress(progress);
+        },
+      });
+
+      setUploadStatus("Upload complete!");
+    } catch (error) {
+      setUploadStatus("Upload failed.");
+      setError("An error occurred while uploading the file.");
+      console.error(error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (message.trim()) {
       const newMessage: ChatMessage = {
         id: Date.now().toString(),
-        content: message,
-        sender: "user",
+        message: message,
+        user_type: "user",
         timestamp: new Date(),
-        type: "text",
+        type: "TEXT",
       };
       setMessages((prev) => [...prev, newMessage]);
       setMessage("");
 
+      const textMessageResponse = await sendMessage("TEXT", message);
+      // console.log(textMessageResponse, "txt msgs");
       // Simulate AI response
-      setTimeout(() => {
-        const aiResponse: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          content: "This is a simulated AI response to your message.",
-          sender: "ai",
-          timestamp: new Date(),
-          type: "text",
-        };
-        setMessages((prev) => [...prev, aiResponse]);
-      }, 1000);
+      // setTimeout(() => {
+      //   const aiResponse: ChatMessage = {
+      //     id: (Date.now() + 1).toString(),
+      //     content: "This is a simulated AI response to your message.",
+      //     sender: "ai",
+      //     timestamp: new Date(),
+      //     type: "TEXT",
+      //   };
+      //   setMessages((prev) => [...prev, aiResponse]);
+      // }, 1000);
     } else if (isRecording) {
       // Stop the recording and wait for the data
       if (
@@ -266,13 +419,16 @@ const ChatModal = () => {
             // Create and add the audio message
             const newMessage: ChatMessage = {
               id: Date.now().toString(),
-              content: "Audio message",
-              sender: "user",
+              message: "Audio message",
+              user_type: "user",
               timestamp: new Date(),
-              type: "audio",
+              type: "AUDIO",
               audioUrl: URL.createObjectURL(audioBlob),
             };
             setMessages((prev) => [...prev, newMessage]);
+
+            // Upload the audio file to presigned URL
+            await handleAudioUpload(audioBlob);
 
             // Clean up
             if (streamRef.current) {
@@ -300,10 +456,10 @@ const ChatModal = () => {
         ...prev,
         {
           id: Date.now().toString(),
-          content: speechToText?.transcriptRef?.current || "Audio message",
-          sender: "user",
+          message: speechToText?.transcriptRef?.current || "Audio message",
+          user_type: "user",
           timestamp: new Date(),
-          type: speechToText?.transcriptRef?.current ? "text" : "audio",
+          type: speechToText?.transcriptRef?.current ? "TEXT" : "AUDIO",
         },
       ]);
       textToSpeech.speak(
@@ -340,6 +496,10 @@ const ChatModal = () => {
     }
   };
 
+  const handleImageUpload = () => {
+    setIsAttachImage(!isAttachImage);
+  };
+
   useEffect(() => {
     return () => {
       resetTimer();
@@ -363,6 +523,46 @@ const ChatModal = () => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
+  const handleUpload = async () => {
+    if (!file) {
+      setError("No file selected.");
+      return;
+    }
+
+    try {
+      setUploadProgress(0);
+      setUploadStatus("Uploading...");
+
+      // Get presigned URL from the server
+      const uploadUrlResponse = await UploadService.getPresignedUrl({
+        file_name: file.name,
+        file_type: file.type,
+        file_path: `images`,
+      });
+
+      const uploadUrl = uploadUrlResponse.presigned_url;
+
+      // Upload the file to S3
+      await axios.put(uploadUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+        onUploadProgress: (progressEvent) => {
+          const progress =
+            progressEvent.total &&
+            Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          progress && setUploadProgress(progress);
+        },
+      });
+
+      setUploadStatus("Upload complete!");
+    } catch (error) {
+      setUploadStatus("Upload failed.");
+      setError("An error occurred while uploading the file.");
+      console.error(error);
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -376,17 +576,17 @@ const ChatModal = () => {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${msg.user_type === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`max-w-[70%] rounded-lg p-3 ${
-                    msg.sender === "user"
+                    msg.user_type === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
-                  {msg.type === "text" ? (
-                    <p>{msg.content}</p>
+                  {msg.type === "TEXT" ? (
+                    <p>{msg.message}</p>
                   ) : (
                     <div className="flex items-center gap-2">
                       <Button
@@ -407,7 +607,7 @@ const ChatModal = () => {
                     </div>
                   )}
                   <span className="text-xs opacity-70 mt-1 block">
-                    {msg.timestamp.toLocaleTimeString()}
+                    {/* {msg.timestamp.toLocaleTimeString()} */}
                   </span>
                 </div>
               </div>
@@ -433,6 +633,7 @@ const ChatModal = () => {
                     variant="ghost"
                     size="icon"
                     className="text-muted-foreground hover:text-foreground"
+                    onClick={handleImageUpload}
                   >
                     <Paperclip className="h-5 w-5" />
                   </Button>
@@ -443,7 +644,7 @@ const ChatModal = () => {
                     className="flex-1"
                   />
                   <Button
-                    type="button"
+                    type="submit"
                     variant="ghost"
                     size="icon"
                     className="text-muted-foreground hover:text-foreground"
@@ -522,6 +723,22 @@ const ChatModal = () => {
               )}
             </form>
           </div>
+          {isAttachImage && (
+            <Dialog open={isAttachImage} onOpenChange={setIsAttachImage}>
+              <DialogContent className="sm:max-w-[425px]">
+                <ImageUpload
+                  setError={setError}
+                  error={error}
+                  uploadProgress={uploadProgress}
+                  setUploadStatus={setUploadStatus}
+                  uploadStatus={uploadStatus}
+                  setFile={setFile}
+                  file={file}
+                  handleUpload={handleUpload}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
         </Card>
       </DialogContent>
     </Dialog>
