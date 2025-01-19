@@ -48,7 +48,7 @@ export default function BlogListing() {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-transparent max-w-7xl">
-      <h1 className="text-4xl font-bold mb-8 text-primary">Our Blog</h1>
+      <h1 className="text-3xl font-medium mb-8 text-primary">Recent Blogs</h1>
       <div className="mb-8 space-y-4 md:space-y-0 md:flex md:space-x-4 ">
         <SearchBar onSearch={handleSearch} />
         <FilterBar onFilter={handleFilter} />

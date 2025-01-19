@@ -6,6 +6,8 @@ import SigninButton from "./signin-button";
 import { ThemeToggle } from "./theme-toggle";
 import ProfileIcon from "./profile-icon";
 import LanguageDialog from "./language-dialog";
+import { SignedIn } from "@clerk/clerk-react";
+import { Button } from "../ui/button";
 
 export function Navbar() {
   // const [isNewMessage, setIsNewMessage] = useState(false);
@@ -43,8 +45,13 @@ export function Navbar() {
 
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            {/* create web only visible div with flex items center spaxe-x-4 */}
-            <div className="hidden md:block">
+
+            <div className="hidden md:flex space-x-4">
+              <SignedIn>
+                <Link to="/dashboard/my-drafts">
+                  <Button variant={"secondary"}>My Drafts</Button>
+                </Link>
+              </SignedIn>
               <ProfileIcon size="sm" />
             </div>
             <MobileMenu />

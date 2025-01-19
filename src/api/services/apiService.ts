@@ -6,7 +6,6 @@ export const apiService = {
   async get<T>(url: string) {
     try {
       const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
-      console.log({ token });
       const response = await api.get<T>(url, {
         headers: {
           Authorization: `Bearer ${token}`,
