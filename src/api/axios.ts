@@ -83,7 +83,7 @@ api.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          toast.error("Unauthorized! Please login again.");
+          // toast.error("Unauthorized! Please login again.");
           // handleUnauthorized("You have been logged out!");
           break;
         case 403:

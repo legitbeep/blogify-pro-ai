@@ -21,17 +21,22 @@ export function FeaturesSectionWithCardGradient({
     staleTime: Infinity,
   });
   const navigate = useNavigate();
+
+  const createSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/ /g, "-")
+      .replace(/[^\w-]+/g, "");
+  };
+
   const onBlogClick = (blog: BlogResponse) => {
-    if (
-      window.location.pathname?.includes("my-drafts") ||
-      (blog?.user_id == userQuery?.data?._id && !blog.is_blog)
-    ) {
+    if (!blog.is_blog) {
       navigate({
         to: `/dashboard/${blog._id}/edit`,
       });
     } else {
       navigate({
-        to: `/dashboard/${blog._id}/edit`,
+        to: `/dashboard/${blog._id}/edit?lang=en&slug=${createSlug(blog.title)}`,
       });
     }
   };

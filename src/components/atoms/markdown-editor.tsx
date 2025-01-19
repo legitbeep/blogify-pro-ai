@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
-import { Loader2, Pen, Save } from "lucide-react";
+import { Loader2, Pause, Pen, Play, Save } from "lucide-react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import BlogService from "@/api/services/blogService";
@@ -26,6 +26,8 @@ export default function MarkdownEditor({
   const { blogId } = useParams({ from: "/_auth/dashboard/$blogId/edit" });
   const [loadingPublish, setLoadingPublish] = useState(false);
   const navigate = useNavigate();
+  const audioRef = React.useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const isPublished = blogData?.data?.is_blog ?? false;
   const updateBlogMutation = useMutation({
@@ -71,7 +73,9 @@ export default function MarkdownEditor({
   );
 
   useEffect(() => {
+    console.log({ initialValue });
     setValue(initialValue);
+    setEditorValue(initialValue);
   }, [initialValue]);
 
   const handleSave = () => {
@@ -107,9 +111,7 @@ export default function MarkdownEditor({
         source_language_code: "en",
         target_language_codes: CONSTANTS.LANGUAGES.filter(
           (l) => l.value !== "en"
-        )
-          .map((lang) => lang.value)
-          .slice(0, 3),
+        ).map((lang) => lang.value),
       });
       await updateBlogMutation.mutate(translatedResponse?.data ?? []);
     } catch (error) {
@@ -119,8 +121,21 @@ export default function MarkdownEditor({
     }
   };
 
+  const onToggleAudioPlay = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      if (audio.paused) {
+        audio.play();
+        setIsPlaying(true);
+      } else {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    }
+  };
+
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
+    <div className="p-4 my-4 bg-white rounded-lg shadow-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
       {isPublished && (
         <LanguageDialog
           selectedLangs={selectedLanguages}
@@ -172,6 +187,31 @@ export default function MarkdownEditor({
                 <Pen className="mr-2" />
                 Edit
               </Button>
+            )}
+            {blogData?.audio_file_url && !showEdit && (
+              <>
+                <Button
+                  onClick={onToggleAudioPlay}
+                  variant="outline"
+                  className="bg-transparent "
+                >
+                  {!isPlaying ? (
+                    <>
+                      <Play className="mr-2" />
+                      Play
+                    </>
+                  ) : (
+                    <>
+                      <Pause className="mr-2" /> Pause
+                    </>
+                  )}
+                </Button>
+                <audio
+                  ref={audioRef}
+                  src={blogData?.audio_file_url}
+                  className="invisible"
+                />
+              </>
             )}
           </div>
           <MDEditor.Markdown source={editorValue} />

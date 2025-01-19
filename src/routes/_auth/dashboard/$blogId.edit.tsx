@@ -1,17 +1,16 @@
 import BlogService from "@/api/services/blogService";
-import { createFileRoute, useParams } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import MarkdownEditor from "@/components/atoms/markdown-editor";
-import { useState, useEffect } from "react";
-import BlogEditNavbar from "@/components/modules/blogs/blog-edit-navbar";
 import Footer from "@/components/atoms/footer";
-import LanguageDialog, {
-  LanguageType,
-} from "@/components/atoms/language-dialog";
-import TranslateService from "@/api/services/translateService";
-import { toast } from "sonner";
-import { CONSTANTS } from "@/lib/utils";
+import MarkdownEditor from "@/components/atoms/markdown-editor";
+import BlogEditNavbar from "@/components/modules/blogs/blog-edit-navbar";
+import { LanguageSelector } from "@/components/modules/blogs/language-selector";
 import { MessageLoading } from "@/components/ui/message-loading";
+import { useQuery } from "@tanstack/react-query";
+import {
+  createFileRoute,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_auth/dashboard/$blogId/edit")({
   component: BlogEditComponent,
@@ -19,12 +18,18 @@ export const Route = createFileRoute("/_auth/dashboard/$blogId/edit")({
 
 function BlogEditComponent() {
   const { blogId } = useParams({ from: "/_auth/dashboard/$blogId/edit" });
-
+  // extract query params lang and slug if no lang then 'en' using window object
+  const lang = new URLSearchParams(window.location.search).get("lang") ?? "en";
+  const slug =
+    new URLSearchParams(window.location.search).get("slug") ?? "slug";
   const blogQuery = useQuery<any>({
     queryKey: ["blog", blogId],
     queryFn: () => BlogService.getBlogByID(blogId),
     enabled: !!blogId,
   });
+
+  const [langState, setLangState] = useState<string>(lang);
+  const navigate = useNavigate();
 
   // const [selectedLangs, setSelectedLangs] = useState<LanguageType[]>([
   //   CONSTANTS.LANGUAGES.find((lang) => lang.value == "en")!,
@@ -58,6 +63,24 @@ function BlogEditComponent() {
     );
   }
 
+  const onLangChange = (lang: any) => {
+    console.log({ lang });
+    navigate({
+      to: `/dashboard/${blogId}/edit?lang=${lang?.value ?? "en"}`,
+    });
+    setLangState(lang?.value ?? "en");
+  };
+
+  console.log({
+    transcript: blogQuery?.data?.transcripts?.find(
+      (transcript: any) => transcript?.language_code === lang
+    ),
+    initVal:
+      blogQuery?.data?.transcripts?.find(
+        (transcript: any) => transcript?.language_code === langState
+      )?.content ?? blogQuery?.data?.content,
+  });
+
   return (
     <>
       <BlogEditNavbar />
@@ -69,9 +92,23 @@ function BlogEditComponent() {
         /> */}
         <div className="mt-4">
           <h1 className="text-2xl font-bold mb-4">
-            Blog: {blogQuery?.data?.title}
+            Title: {blogQuery?.data?.title}
           </h1>
-          {blogQuery?.data?.is_blog ? (
+          {blogQuery?.data?.is_blog && (
+            <LanguageSelector
+              defaultValue={langState}
+              onLangChange={onLangChange}
+            />
+          )}
+          <MarkdownEditor
+            initialValue={
+              blogQuery?.data?.transcripts?.find(
+                (transcript: any) => transcript?.language_code === langState
+              )?.content ?? blogQuery?.data?.content
+            }
+            blogData={blogQuery?.data}
+          />
+          {/* {blogQuery?.data?.is_blog ? (
             <div className="flex flex-col gap-4">
               <span className="text-md font-md">en</span>
               <MarkdownEditor
@@ -96,7 +133,7 @@ function BlogEditComponent() {
               blogData={blogQuery?.data}
               initialValue={blogQuery?.data?.content ?? ""}
             />
-          )}
+          )} */}
         </div>
       </div>
       <Footer />
