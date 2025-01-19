@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import CallService from "@/api/services/callService";
 
 interface PhoneDialogProps {
   open: boolean;
@@ -49,8 +50,9 @@ const PhoneDialog: React.FC<PhoneDialogProps> = ({
     onSubmit("+91" + phoneNumber);
     setPhoneNumber("");
     setError("");
+    CallService.getCall();
     onOpenChange(false);
-    toast.success("Phone number submitted successfully!");
+    toast.success("You will receive a call soon!");
   };
 
   return (
@@ -70,7 +72,7 @@ const PhoneDialog: React.FC<PhoneDialogProps> = ({
               </div>
               <Input
                 id="phoneNumber"
-                type="tel"
+                type="password"
                 value={phoneNumber}
                 onChange={handleInputChange}
                 className="rounded-l-none bg-transparent "
