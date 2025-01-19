@@ -7,7 +7,7 @@ import { deleteCookie, login } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import AuthService from "@/api/services/authService";
 import { router } from "@/main";
-import { SignedIn } from "@clerk/clerk-react";
+import { SignedIn, useAuth, useSignIn } from "@clerk/clerk-react";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -17,7 +17,22 @@ export function MobileMenu() {
     queryFn: AuthService.getUser,
     staleTime: Infinity,
   });
+  const { isLoaded, signIn } = useSignIn();
+  const { isSignedIn } = useAuth();
 
+  const handleGoogleLogin = async () => {
+    if (!isLoaded) return;
+
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/",
+        redirectUrlComplete: "/",
+      });
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  };
   let links = [
     { label: "PRICING" },
     { label: "GET STARTED" },
@@ -40,7 +55,7 @@ export function MobileMenu() {
         });
         break;
       case "GET STARTED":
-        login();
+        handleGoogleLogin();
         break;
       case "PROFILE":
         navigate({

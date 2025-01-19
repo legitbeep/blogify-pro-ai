@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import Particles from "@/components/ui/particles";
 import { cn, login } from "@/lib/utils";
 import { useThemeStore } from "@/store/useThemeStore";
+import { useAuth, useSignIn } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ChevronRight } from "lucide-react";
@@ -49,6 +50,22 @@ function RouteComponent() {
   const [color, setColor] = React.useState(theme === "light" ? "#000" : "#fff");
   const [createPost, setCreatePost] = useState(false);
 
+  const { isLoaded, signIn } = useSignIn();
+  const { isSignedIn } = useAuth();
+
+  const handleGoogleLogin = async () => {
+    if (!isLoaded) return;
+
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/",
+        redirectUrlComplete: "/",
+      });
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  };
   // const [orderLoading, setOrderLoading] = useState(false);
   // const razorpayObj = useRazorpay();
   // const { initiatePayment, isLoading } = razorpayObj;
@@ -74,7 +91,7 @@ function RouteComponent() {
         });
       } else setCreatePost(true); // Open FileUploader
     } else {
-      login();
+      handleGoogleLogin();
     }
   };
 
