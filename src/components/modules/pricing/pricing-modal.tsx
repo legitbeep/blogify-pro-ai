@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { CheckCircle, XCircle, Sparkles, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
