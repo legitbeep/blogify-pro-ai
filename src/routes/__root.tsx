@@ -61,11 +61,8 @@ function RootComponent() {
 
   return (
     <React.Fragment>
-      {/* TODO: Delete this */}
-      <FullScreenLock>
-        <Outlet />
-        <NotificationComponent />
-      </FullScreenLock>
+      <Outlet />
+      <NotificationComponent />
     </React.Fragment>
   );
 }
