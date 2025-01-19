@@ -55,5 +55,6 @@ export const useToken = () => {
     token: backendToken,
     isLoading,
     error,
+    fetchBackendToken,
   };
 };

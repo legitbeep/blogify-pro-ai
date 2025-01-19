@@ -9,7 +9,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SignedIn } from "@clerk/clerk-react";
+import { Link } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface LangType {
@@ -65,7 +68,13 @@ const BlogEditNavbar = () => {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             {/* create web only visible div with flex items center spaxe-x-4 */}
-            <div className="hidden md:block">
+
+            <div className="hidden md:flex space-x-4">
+              {/* <SignedIn>
+                <Link to="/dashboard/my-drafts">
+                  <Button variant={"secondary"}>My Drafts</Button>
+                </Link>
+              </SignedIn> */}
               <ProfileIcon size="sm" />
             </div>
             <MobileMenu />

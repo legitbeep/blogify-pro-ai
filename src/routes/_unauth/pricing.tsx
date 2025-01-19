@@ -24,6 +24,7 @@ export const Route = createFileRoute("/_unauth/pricing")({
 });
 
 import React from "react";
+import { PurchaseDialog } from "@/components/modules/pricing/pricing-modal";
 
 const SpotlightContainer = ({ children }: PropsWithChildren) => {
   return (
@@ -205,6 +206,14 @@ function RouteComponent() {
         onOpenChange={setDialogOpen}
         onSubmit={handlePhoneSubmit}
       />
+      {razorpayObj?.isError || razorpayObj?.isSuccess ? (
+        <PurchaseDialog
+          isOpen={true}
+          isSuccess={razorpayObj.isSuccess}
+          onAction={razorpayObj.resetPayment}
+          onClose={razorpayObj.resetPayment}
+        />
+      ) : null}
     </SpotlightContainer>
   );
 }
