@@ -17,7 +17,6 @@ import { Route as UnauthIndexImport } from './routes/_unauth/index'
 import { Route as UnauthPricingImport } from './routes/_unauth/pricing'
 import { Route as AuthDashboardIndexImport } from './routes/_auth/dashboard/index'
 import { Route as AuthDashboardProfileImport } from './routes/_auth/dashboard/profile'
-import { Route as AuthDashboardPreviewImport } from './routes/_auth/dashboard/preview'
 import { Route as AuthDashboardMyDraftsImport } from './routes/_auth/dashboard/my-drafts'
 import { Route as AuthDashboardAnalyticsImport } from './routes/_auth/dashboard/analytics'
 import { Route as AuthDashboardChatChatIdImport } from './routes/_auth/dashboard/chat/$chatId'
@@ -56,12 +55,6 @@ const AuthDashboardIndexRoute = AuthDashboardIndexImport.update({
 const AuthDashboardProfileRoute = AuthDashboardProfileImport.update({
   id: '/dashboard/profile',
   path: '/dashboard/profile',
-  getParentRoute: () => AuthRoute,
-} as any)
-
-const AuthDashboardPreviewRoute = AuthDashboardPreviewImport.update({
-  id: '/dashboard/preview',
-  path: '/dashboard/preview',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -135,13 +128,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardMyDraftsImport
       parentRoute: typeof AuthImport
     }
-    '/_auth/dashboard/preview': {
-      id: '/_auth/dashboard/preview'
-      path: '/dashboard/preview'
-      fullPath: '/dashboard/preview'
-      preLoaderRoute: typeof AuthDashboardPreviewImport
-      parentRoute: typeof AuthImport
-    }
     '/_auth/dashboard/profile': {
       id: '/_auth/dashboard/profile'
       path: '/dashboard/profile'
@@ -178,7 +164,6 @@ declare module '@tanstack/react-router' {
 interface AuthRouteChildren {
   AuthDashboardAnalyticsRoute: typeof AuthDashboardAnalyticsRoute
   AuthDashboardMyDraftsRoute: typeof AuthDashboardMyDraftsRoute
-  AuthDashboardPreviewRoute: typeof AuthDashboardPreviewRoute
   AuthDashboardProfileRoute: typeof AuthDashboardProfileRoute
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
   AuthDashboardBlogIdEditRoute: typeof AuthDashboardBlogIdEditRoute
@@ -188,7 +173,6 @@ interface AuthRouteChildren {
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardAnalyticsRoute: AuthDashboardAnalyticsRoute,
   AuthDashboardMyDraftsRoute: AuthDashboardMyDraftsRoute,
-  AuthDashboardPreviewRoute: AuthDashboardPreviewRoute,
   AuthDashboardProfileRoute: AuthDashboardProfileRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
   AuthDashboardBlogIdEditRoute: AuthDashboardBlogIdEditRoute,
@@ -216,7 +200,6 @@ export interface FileRoutesByFullPath {
   '/': typeof UnauthIndexRoute
   '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
   '/dashboard/my-drafts': typeof AuthDashboardMyDraftsRoute
-  '/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
   '/dashboard/$blogId/edit': typeof AuthDashboardBlogIdEditRoute
@@ -229,7 +212,6 @@ export interface FileRoutesByTo {
   '/': typeof UnauthIndexRoute
   '/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
   '/dashboard/my-drafts': typeof AuthDashboardMyDraftsRoute
-  '/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/dashboard/profile': typeof AuthDashboardProfileRoute
   '/dashboard': typeof AuthDashboardIndexRoute
   '/dashboard/$blogId/edit': typeof AuthDashboardBlogIdEditRoute
@@ -244,7 +226,6 @@ export interface FileRoutesById {
   '/_unauth/': typeof UnauthIndexRoute
   '/_auth/dashboard/analytics': typeof AuthDashboardAnalyticsRoute
   '/_auth/dashboard/my-drafts': typeof AuthDashboardMyDraftsRoute
-  '/_auth/dashboard/preview': typeof AuthDashboardPreviewRoute
   '/_auth/dashboard/profile': typeof AuthDashboardProfileRoute
   '/_auth/dashboard/': typeof AuthDashboardIndexRoute
   '/_auth/dashboard/$blogId/edit': typeof AuthDashboardBlogIdEditRoute
@@ -259,7 +240,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard/analytics'
     | '/dashboard/my-drafts'
-    | '/dashboard/preview'
     | '/dashboard/profile'
     | '/dashboard'
     | '/dashboard/$blogId/edit'
@@ -271,7 +251,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard/analytics'
     | '/dashboard/my-drafts'
-    | '/dashboard/preview'
     | '/dashboard/profile'
     | '/dashboard'
     | '/dashboard/$blogId/edit'
@@ -284,7 +263,6 @@ export interface FileRouteTypes {
     | '/_unauth/'
     | '/_auth/dashboard/analytics'
     | '/_auth/dashboard/my-drafts'
-    | '/_auth/dashboard/preview'
     | '/_auth/dashboard/profile'
     | '/_auth/dashboard/'
     | '/_auth/dashboard/$blogId/edit'
@@ -321,7 +299,6 @@ export const routeTree = rootRoute
       "children": [
         "/_auth/dashboard/analytics",
         "/_auth/dashboard/my-drafts",
-        "/_auth/dashboard/preview",
         "/_auth/dashboard/profile",
         "/_auth/dashboard/",
         "/_auth/dashboard/$blogId/edit",
@@ -349,10 +326,6 @@ export const routeTree = rootRoute
     },
     "/_auth/dashboard/my-drafts": {
       "filePath": "_auth/dashboard/my-drafts.tsx",
-      "parent": "/_auth"
-    },
-    "/_auth/dashboard/preview": {
-      "filePath": "_auth/dashboard/preview.tsx",
       "parent": "/_auth"
     },
     "/_auth/dashboard/profile": {

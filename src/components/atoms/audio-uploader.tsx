@@ -57,12 +57,12 @@ export function AudioUploader({ onUploadComplete }: AudioUploaderProps) {
         setUploadProgress,
         setUploadStatus
       );
-      const apiResponse = await BlogService.createBlog({
+      const apiResponse: any = await BlogService.createBlog({
         content: res.response,
       });
       onUploadComplete();
       navigate({
-        to: `/dashboard/${apiResponse}/edit`,
+        to: `/dashboard/${apiResponse?.id}/edit`,
       });
     } catch (error) {
       console.error("Upload failed:", error);

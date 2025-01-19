@@ -17,14 +17,14 @@ export function TextInput({ onUploadComplete }: TextInputProps) {
 
   const uploadMutation = useMutation({
     mutationFn: async (textContent: string) => {
-      const apiResponse = await BlogService.createBlog({
+      const apiResponse: any = await BlogService.createBlog({
         content: textContent,
       });
       return apiResponse;
     },
     onSuccess: (res) => {
       navigate({
-        to: `/dashboard/${res}/edit`,
+        to: `/dashboard/${res?.id}/edit`,
       });
     },
     onError: (error) => {

@@ -66,7 +66,7 @@ export const uploadFile = async (
     const translateResponse = await TranslateService.getTranslateData({
       text: transcriptResponse.response,
       source_language_code: "en",
-      target_language_code: "hi",
+      target_language_code: ["hi"],
     });
 
     return translateResponse;

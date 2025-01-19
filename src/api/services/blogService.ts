@@ -10,6 +10,9 @@ class BlogService {
   static async getBlogs() {
     return apiService.get("/list");
   }
+  static async getBlogByID(blogId: string) {
+    return apiService.get(`/blog/${blogId}`);
+  }
   static async createBlog(data: BlogRequest): Promise<string> {
     return apiService.post("/blogs", data);
   }
