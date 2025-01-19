@@ -16,12 +16,14 @@ interface MarkdownEditorProps {
   initialValue?: string;
   hideEdit?: boolean;
   blogData: any;
+  audioUrl?: string;
 }
 
 export default function MarkdownEditor({
   initialValue,
   blogData,
   hideEdit = false,
+  audioUrl,
 }: MarkdownEditorProps) {
   const { blogId } = useParams({ from: "/_auth/dashboard/$blogId/edit" });
   const [loadingPublish, setLoadingPublish] = useState(false);
@@ -188,7 +190,7 @@ export default function MarkdownEditor({
                 Edit
               </Button>
             )}
-            {blogData?.audio_file_url && !showEdit && (
+            {!!audioUrl && !showEdit && (
               <>
                 <Button
                   onClick={onToggleAudioPlay}
@@ -206,11 +208,7 @@ export default function MarkdownEditor({
                     </>
                   )}
                 </Button>
-                <audio
-                  ref={audioRef}
-                  src={blogData?.audio_file_url}
-                  className="invisible"
-                />
+                <audio ref={audioRef} src={audioUrl} className="invisible" />
               </>
             )}
           </div>

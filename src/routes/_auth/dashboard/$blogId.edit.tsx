@@ -107,33 +107,14 @@ function BlogEditComponent() {
               )?.content ?? blogQuery?.data?.content
             }
             blogData={blogQuery?.data}
+            audioUrl={
+              langState == "en"
+                ? blogQuery?.data?.audio_url
+                : blogQuery?.data?.transcripts?.find(
+                    (transcript: any) => transcript?.language_code === langState
+                  )?.audio_url
+            }
           />
-          {/* {blogQuery?.data?.is_blog ? (
-            <div className="flex flex-col gap-4">
-              <span className="text-md font-md">en</span>
-              <MarkdownEditor
-                blogData={blogQuery?.data}
-                initialValue={blogQuery?.data?.content ?? ""}
-              />
-              {blogQuery?.data?.transcripts?.map((transcript: any) => (
-                <>
-                  <span className="text-md font-md">
-                    {transcript?.language_code}
-                  </span>
-                  <MarkdownEditor
-                    initialValue={transcript?.content ?? ""}
-                    blogData={blogQuery?.data}
-                    key={transcript?.language_code}
-                  />
-                </>
-              ))}
-            </div>
-          ) : (
-            <MarkdownEditor
-              blogData={blogQuery?.data}
-              initialValue={blogQuery?.data?.content ?? ""}
-            />
-          )} */}
         </div>
       </div>
       <Footer />
