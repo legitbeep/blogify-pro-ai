@@ -1,3 +1,4 @@
+import api from "../axios";
 import { apiService } from "./apiService";
 
 interface TranscriptDataRequest {

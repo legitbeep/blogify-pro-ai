@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,18 +15,19 @@ import { AudioUploader } from "./audio-uploader";
 import { ImageUploader } from "./image-uploader";
 import { TextInput } from "./text-input";
 
-export function FileUploader() {
-  const [isOpen, setIsOpen] = useState(true);
-
+export function FileUploader({
+  isOpen,
+  onClose,
+}: {
+  isOpen: any;
+  onClose: any;
+}) {
   const handleUploadComplete = () => {
-    setIsOpen(false);
+    onClose(); // Trigger the parent component's close handler
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleUploadComplete}>
-      {/* <DialogTrigger asChild>
-        <Button variant="outline">Upload File</Button>
-      </DialogTrigger> */}
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">

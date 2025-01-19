@@ -25,7 +25,7 @@ export interface ApiErrorData {
 // Create axios instance
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000",
-  timeout: 10000,
+  timeout: 50000,
   headers: {
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "69420",

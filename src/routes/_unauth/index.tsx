@@ -64,47 +64,18 @@ function RouteComponent() {
     setColor(theme === "light" ? "#000" : "#fff");
   }, [theme]);
 
-  const onPricingClick = () => {
-    navigate({
-      to: "/pricing",
-    });
-  };
-
-  // const handlePayment = async () => {
-  //   setOrderLoading(true);
-  //   try {
-  //     const user = {
-  //       name: "John Doe",
-  //       email: "johndoe@gmail.com",
-  //     };
-  //     const res = await PaymentService.createOrder({
-  //       amount: DUMMY_PAYMENT.amount,
-  //       customer_details: user,
-  //     });
-  //     if (res?.status !== "created") throw new Error("Order creation failed");
-  //     initiatePayment({
-  //       amount: res.amount,
-  //       currency: res.currency,
-  //       name: "Warp Speed",
-  //       description: "",
-  //       notes: {
-  //         orderId: res?.orderId ?? "",
-  //       },
-  //       order_id: res.id,
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  //   setOrderLoading(false);
-  // };
-
   const onGetStarted = () => {
     if (!!userQuery?.data) {
-      setCreatePost(true);
+      setCreatePost(true); // Open FileUploader
     } else {
       login();
     }
   };
+
+  const closeFileUploader = () => {
+    setCreatePost(false); // Close FileUploader
+  };
+
   return (
     <>
       <AuroraBackground className="min-h-[100dvh]">
@@ -148,7 +119,11 @@ function RouteComponent() {
                     size="lg"
                     className="h-11"
                     variant={"secondary"}
-                    onClick={onPricingClick}
+                    onClick={() =>
+                      navigate({
+                        to: "/pricing",
+                      })
+                    }
                   >
                     Pricing Details
                   </Button>
@@ -166,7 +141,9 @@ function RouteComponent() {
         </div>
       </AuroraBackground>
       <BlogListing />
-      {createPost && <FileUploader />}
+      {createPost && (
+        <FileUploader isOpen={createPost} onClose={closeFileUploader} />
+      )}
     </>
   );
 }
