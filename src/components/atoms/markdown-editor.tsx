@@ -10,6 +10,7 @@ import AuthService from "@/api/services/authService";
 import PublishDialog from "../modules/blogs/publish-dialog";
 import TranslateService from "@/api/services/translateService";
 import { CONSTANTS } from "@/lib/utils";
+import LanguageDialog, { LanguageType } from "./language-dialog";
 
 interface MarkdownEditorProps {
   initialValue?: string;
@@ -18,25 +19,25 @@ interface MarkdownEditorProps {
 }
 
 export default function MarkdownEditor({
-  hideEdit,
   initialValue,
   blogData,
+  hideEdit = false,
 }: MarkdownEditorProps) {
   const { blogId } = useParams({ from: "/_auth/dashboard/$blogId/edit" });
   const [loadingPublish, setLoadingPublish] = useState(false);
   const navigate = useNavigate();
+
+  const isPublished = blogData?.data?.is_blog ?? false;
   const updateBlogMutation = useMutation({
     mutationFn: (translatedRes: any) =>
       BlogService.updateBlog({
-        data: {
-          content: value,
-          ...(translatedRes
-            ? {
-                transcription: translatedRes,
-                is_blog: true,
-              }
-            : {}),
-        },
+        ...(!!translatedRes
+          ? {
+              transcripts: translatedRes,
+              is_blog: true,
+            }
+          : {}),
+        content: value ?? "",
         blog_id: blogId,
       }),
     onSuccess: (res, payload) => {
@@ -65,6 +66,9 @@ export default function MarkdownEditor({
   const [showEdit, setShowEdit] = useState(false);
   const [editorValue, setEditorValue] = useState(value);
   const [showPublish, setShowPublish] = useState(false);
+  const [selectedLanguages, setSelectedLanguages] = useState<LanguageType[]>(
+    []
+  );
 
   useEffect(() => {
     setValue(initialValue);
@@ -107,7 +111,6 @@ export default function MarkdownEditor({
           .map((lang) => lang.value)
           .slice(0, 3),
       });
-      console.log({ translatedResponse });
       await updateBlogMutation.mutate(translatedResponse?.data ?? []);
     } catch (error) {
       console.error("Error updating blog:", error);
@@ -118,13 +121,19 @@ export default function MarkdownEditor({
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
-      {showEdit && !hideEdit ? (
+      {isPublished && (
+        <LanguageDialog
+          selectedLangs={selectedLanguages}
+          onConfirm={(val) => setSelectedLanguages(val)}
+        />
+      )}
+      {showEdit ? (
         <div className="space-y-4">
           <MDEditor
             value={editorValue}
             onChange={handleChange}
             height={300}
-            className="border border-gray-300 rounded-lg p-2 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            className="border border-gray-300 rounded-lg p-2 bg-white text-black dark:bg-black dark:text-white dark:border-gray-600"
           />
           <div className="flex justify-end gap-2">
             <Button
@@ -149,25 +158,31 @@ export default function MarkdownEditor({
           <div className="flex justify-end space-x-4">
             {!showEdit &&
               blogData?.user_id === userQuery?.data?._id &&
-              !blogData?.data?.is_blog && (
+              !blogData?.is_blog && (
                 <Button className="" onClick={onPublish}>
                   Publish
                 </Button>
               )}
-            <Button
-              onClick={() => setShowEdit(true)}
-              variant="outline"
-              className="bg-transparent "
-            >
-              <Pen className="mr-2" />
-              Edit
-            </Button>
+            {!blogData?.is_blog && (
+              <Button
+                onClick={() => setShowEdit(true)}
+                variant="outline"
+                className="bg-transparent "
+              >
+                <Pen className="mr-2" />
+                Edit
+              </Button>
+            )}
           </div>
           <MDEditor.Markdown source={editorValue} />
         </div>
       )}
       {showPublish && (
-        <PublishDialog isLoading={loadingPublish} onAction={onConfirmPublish} />
+        <PublishDialog
+          isLoading={loadingPublish}
+          onClose={() => setShowPublish(false)}
+          onAction={onConfirmPublish}
+        />
       )}
     </div>
   );

@@ -13,9 +13,7 @@ interface TranscriptDataResponse {
 }
 
 class TranscriptService {
-  static async getTranscriptData(
-    data: TranscriptDataRequest
-  ): Promise<TranscriptDataResponse> {
+  static async getTranscriptData(data: TranscriptDataRequest): Promise<any> {
     return apiService.post("/transcript", data);
   }
 }

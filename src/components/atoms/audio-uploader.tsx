@@ -58,7 +58,7 @@ export function AudioUploader({ onUploadComplete }: AudioUploaderProps) {
         setUploadStatus
       );
       const apiResponse: any = await BlogService.createBlog({
-        content: res.response,
+        content: res ?? "",
       });
       onUploadComplete();
       navigate({

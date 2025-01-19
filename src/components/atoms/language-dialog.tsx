@@ -21,13 +21,13 @@ export interface LanguageType {
 interface LanguageDialogProps {
   onConfirm: (langs: LanguageType[]) => void;
   selectedLangs: LanguageType[];
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 function LanguageDialog({
   onConfirm,
   selectedLangs,
-  isLoading,
+  isLoading = false,
 }: LanguageDialogProps) {
   const [selectedLanguages, setSelectedLanguages] =
     React.useState<LanguageType[]>(selectedLangs);

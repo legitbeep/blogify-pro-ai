@@ -27,11 +27,11 @@ export function FeaturesSectionWithCardGradient({
       (blog?.user_id == userQuery?.data?._id && !blog.is_blog)
     ) {
       navigate({
-        to: `/blogs/${blog.id}/edit`,
+        to: `/dashboard/${blog._id}/edit`,
       });
     } else {
       navigate({
-        to: `/blogs/${blog.id}`,
+        to: `/dashboard/${blog._id}/edit`,
       });
     }
   };

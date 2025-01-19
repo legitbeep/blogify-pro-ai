@@ -6,6 +6,9 @@ interface BlogUpdateRequest {
 
 interface BlogRequest {
   content: string;
+  transcripts: any;
+  blog_id: string;
+  is_blog?: boolean;
 }
 
 export interface TagType {
@@ -14,7 +17,7 @@ export interface TagType {
 }
 
 export interface BlogResponse {
-  id: string;
+  _id: string;
   audio_file_url?: string;
   views: number;
   content: string;
@@ -48,9 +51,7 @@ class BlogService {
     return apiService.post(`/blogs`, data);
   }
 
-  static async updateBlog(
-    data: BlogUpdateRequest
-  ): Promise<{ result: boolean }> {
+  static async updateBlog(data: any): Promise<{ result: boolean }> {
     return apiService.patch("/blogs", data);
   }
   static queryKeys = {

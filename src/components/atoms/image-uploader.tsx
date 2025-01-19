@@ -34,7 +34,7 @@ export function ImageUploader({ onUploadComplete }: ImageUploaderProps) {
       );
       console.log({ res });
       const apiResponse: any = await BlogService.createBlog({
-        content: res.response,
+        content: res,
       });
       onUploadComplete();
       navigate({

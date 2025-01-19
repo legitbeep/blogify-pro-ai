@@ -44,7 +44,7 @@ export const uploadFile = async (
       transcriptData.media_file_url = uploadUrl.split("?")[0];
       transcriptData.media_format = "mp4";
     } else if (fileType === "audio") {
-      transcriptData.file_url = uploadUrl.split("?")[0];
+      transcriptData.media_file_url = uploadUrl.split("?")[0];
       transcriptData.media_format = "mp3";
     } else if (fileType === "text") {
       transcriptData.text = await file.text();
@@ -69,7 +69,7 @@ export const uploadFile = async (
     //   target_language_codes: ["hi"],
     // });
 
-    return transcriptResponse;
+    return transcriptResponse?.text;
   } catch (error) {
     setUploadStatus("Upload or processing failed.");
     console.error(error);

@@ -22,14 +22,23 @@ function RouteComponent() {
     enabled: !!blogId,
   });
 
+  console.log({ blogQuery });
+
   return (
     <>
       <BlogEditNavbar />
       <div className="container mx-auto px-4">
         <MarkdownEditor
-          value={blogQuery?.data?.content ?? ""}
-          setValue={() => {}}
+          blogData={blogQuery?.data}
+          initialValue={blogQuery?.data?.content ?? ""}
         />
+        {blogQuery?.data?.is_blog &&
+          blogQuery?.data?.transcripts?.map((transcript: any) => (
+            <MarkdownEditor
+              initialValue={transcript?.content ?? ""}
+              blogData={blogQuery?.data}
+            />
+          ))}
       </div>
       <Footer />
     </>

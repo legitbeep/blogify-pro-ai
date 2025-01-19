@@ -71,10 +71,32 @@ function BlogEditComponent() {
           <h1 className="text-2xl font-bold mb-4">
             Blog: {blogQuery?.data?.title}
           </h1>
-          <MarkdownEditor
-            initialValue={blogQuery?.data?.content}
-            blogData={blogQuery?.data}
-          />
+          {blogQuery?.data?.is_blog ? (
+            <div className="flex flex-col gap-4">
+              <span className="text-md font-md">en</span>
+              <MarkdownEditor
+                blogData={blogQuery?.data}
+                initialValue={blogQuery?.data?.content ?? ""}
+              />
+              {blogQuery?.data?.transcripts?.map((transcript: any) => (
+                <>
+                  <span className="text-md font-md">
+                    {transcript?.language_code}
+                  </span>
+                  <MarkdownEditor
+                    initialValue={transcript?.content ?? ""}
+                    blogData={blogQuery?.data}
+                    key={transcript?.language_code}
+                  />
+                </>
+              ))}
+            </div>
+          ) : (
+            <MarkdownEditor
+              blogData={blogQuery?.data}
+              initialValue={blogQuery?.data?.content ?? ""}
+            />
+          )}
         </div>
       </div>
       <Footer />

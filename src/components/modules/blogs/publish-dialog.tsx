@@ -33,7 +33,12 @@ function PublishDialog({
   isLoading,
 }: PublishDialogProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={() => !isLoading && onClose()}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        if (!isLoading) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-[425px] md:max-w-[600px]">
         <DialogHeader className="text-center">
           <DialogTitle className="text-3xl font-bold flex items-center justify-center gap-2 mb-4">

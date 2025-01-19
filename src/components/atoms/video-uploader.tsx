@@ -70,7 +70,7 @@ export function VideoUploader({ onUploadComplete }: VideoUploaderProps) {
         setUploadStatus
       );
       const apiResponse: any = await BlogService.createBlog({
-        content: res.response,
+        content: res,
       });
       onUploadComplete();
       navigate({
