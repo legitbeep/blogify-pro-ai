@@ -109,10 +109,10 @@ function BlogEditComponent() {
             blogData={blogQuery?.data}
             audioUrl={
               langState == "en"
-                ? blogQuery?.data?.audio_url
+                ? blogQuery?.data?.audio_file_url
                 : blogQuery?.data?.transcripts?.find(
                     (transcript: any) => transcript?.language_code === langState
-                  )?.audio_url
+                  )?.audio
             }
           />
         </div>

@@ -139,10 +139,33 @@ export default function MarkdownEditor({
   return (
     <div className="p-4 my-4 bg-white rounded-lg shadow-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
       {isPublished && (
-        <LanguageDialog
-          selectedLangs={selectedLanguages}
-          onConfirm={(val) => setSelectedLanguages(val)}
-        />
+        <div className="flex items-center justify-between mb-4 w-full">
+          <LanguageDialog
+            selectedLangs={selectedLanguages}
+            onConfirm={(val) => setSelectedLanguages(val)}
+          />
+          {!!audioUrl && (
+            <>
+              <Button
+                onClick={onToggleAudioPlay}
+                variant="outline"
+                className="bg-transparent "
+              >
+                {!isPlaying ? (
+                  <>
+                    <Play className="mr-2" />
+                    Play
+                  </>
+                ) : (
+                  <>
+                    <Pause className="mr-2" /> Pause
+                  </>
+                )}
+              </Button>
+              <audio ref={audioRef} src={audioUrl} className="invisible" />
+            </>
+          )}
+        </div>
       )}
       {showEdit ? (
         <div className="space-y-4">
