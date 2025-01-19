@@ -3,7 +3,7 @@ import { apiService } from "./apiService";
 interface TranslateDataRequest {
   text: string;
   source_language_code: string;
-  target_language_code: string[];
+  target_language_codes: string[];
 }
 
 interface TranslateDataResponse {

@@ -68,6 +68,18 @@ export const setCookie = (name: string, value: string, days: number) => {
 export const CONSTANTS = {
   CHATBOT_ID: "chat-bot",
   AUTH_TOKEN: "authToken",
+  LANGUAGES: [
+    { value: "hi", label: "Hindi" },
+    { value: "en", label: "English" },
+    { value: "mr", label: "Marathi" },
+    { value: "gu", label: "Gujarati" },
+    { value: "ta", label: "Tamil" },
+    { value: "te", label: "Telugu" },
+    { value: "bn", label: "Bengali" },
+    { value: "ml", label: "Malayalam" },
+    { value: "pa", label: "Punjabi" },
+    { value: "kn", label: "Kannada" },
+  ],
 };
 
 export const getKeyFromLocalStorage = (token = "authtoken") => {

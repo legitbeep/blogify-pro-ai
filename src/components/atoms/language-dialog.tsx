@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox"; // Assuming ShadCN UI has a checkbox component
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,81 +10,88 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CONSTANTS } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
-interface Language {
-  code: string;
+export interface LanguageType {
+  value: string;
   label: string;
 }
 
-const languages: Language[] = [
-  { code: "hi", label: "Hindi" },
-  { code: "mr", label: "Marathi" },
-  { code: "gu", label: "Gujarati" },
-  { code: "ta", label: "Tamil" },
-  { code: "kn", label: "Kannada" },
-  { code: "te", label: "Telugu" },
-  { code: "bn", label: "Bengali" },
-  { code: "ml", label: "Malayalam" },
-  { code: "pa", label: "Punjabi" },
-  { code: "or", label: "Odia" },
-  { code: "en", label: "English" },
-  { code: "auto", label: "Auto Detect" },
-];
+interface LanguageDialogProps {
+  onConfirm: (langs: LanguageType[]) => void;
+  selectedLangs: LanguageType[];
+  isLoading: boolean;
+}
 
-function LanguageDialog() {
-  const [selectedLanguage, setSelectedLanguage] = React.useState<Language>(
-    languages[0]
-  );
+function LanguageDialog({
+  onConfirm,
+  selectedLangs,
+  isLoading,
+}: LanguageDialogProps) {
+  const [selectedLanguages, setSelectedLanguages] =
+    React.useState<LanguageType[]>(selectedLangs);
   const [open, setOpen] = React.useState(false);
 
-  const handleLanguageSelect = (language: Language) => {
-    setSelectedLanguage(language);
-    setOpen(false);
+  const handleLanguageToggle = (language: LanguageType) => {
+    if (isLoading) return;
+    setSelectedLanguages((prevSelected) =>
+      prevSelected.includes(language)
+        ? prevSelected.filter((lang) => lang.value !== language.value)
+        : [...prevSelected, language]
+    );
+  };
+
+  const handleTranslate = () => {
+    if (isLoading) return;
+    onConfirm(selectedLanguages);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className=" justify-between">
-          Language: {selectedLanguage.label}
+        <Button variant="outline" className="justify-between">
+          Translating to: {selectedLanguages.length} lang(s)
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="pb-4">
-          <DialogTitle>Select preferred language for response</DialogTitle>
+          <DialogTitle>Select preferred languages for response</DialogTitle>
         </DialogHeader>
         <div className="max-h-[300px] pr-4 overflow-auto">
           <div className="grid gap-1">
-            {/* show selected language on top */}
-            {
+            {CONSTANTS.LANGUAGES.map((language) => (
               <Button
-                key={selectedLanguage.code}
-                variant="default"
-                className="w-full justify-start"
-                onClick={() => handleLanguageSelect(selectedLanguage)}
+                key={language.value}
+                variant={
+                  selectedLanguages.some(
+                    (lang) => lang.value === language.value
+                  )
+                    ? "outline"
+                    : "ghost"
+                }
+                className="flex items-center justify-between"
+                onClick={() => handleLanguageToggle(language)}
               >
-                {selectedLanguage.label}
+                <span>{language.label}</span>
+                <Checkbox
+                  checked={selectedLanguages.some(
+                    (lang) => lang.value === language.value
+                  )}
+                />
               </Button>
-            }
-            {languages
-              .filter((language) => language.code != selectedLanguage.code)
-              .map((language) => (
-                <Button
-                  key={language.code}
-                  variant={
-                    selectedLanguage.code === language.code
-                      ? "default"
-                      : "ghost"
-                  }
-                  className="w-full justify-start"
-                  onClick={() => handleLanguageSelect(language)}
-                >
-                  {language.label}
-                </Button>
-              ))}
+            ))}
           </div>
         </div>
+        <Button
+          variant="default"
+          className="w-full mt-4"
+          onClick={handleTranslate}
+          disabled={isLoading}
+        >
+          {isLoading ? "Translating..." : "Translate"}
+        </Button>
       </DialogContent>
     </Dialog>
   );

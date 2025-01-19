@@ -32,30 +32,46 @@ export default function MarkdownEditor({
   };
 
   return (
-    <div className="container">
+    <div className="p-4 bg-white rounded-lg shadow-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
       {showEdit ? (
-        <div>
-          <MDEditor value={editorValue} onChange={handleChange} />
-          <div className="flex gap-2 mt-2">
-            <Button onClick={handleSave}>
-              <Save />
+        <div className="space-y-4">
+          <MDEditor
+            value={editorValue}
+            onChange={handleChange}
+            height={300}
+            className="border border-gray-300 rounded-lg p-2 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+          />
+          <div className="flex justify-end gap-2">
+            <Button
+              onClick={handleSave}
+              variant="default"
+              className="bg-blue-500 text-white hover:bg-blue-600"
+            >
+              <Save className="mr-2" />
               Save
             </Button>
-            <Button onClick={handleCancel} variant="secondary">
+            <Button
+              onClick={handleCancel}
+              variant="secondary"
+              className="bg-gray-300 text-black hover:bg-gray-400"
+            >
               Cancel
             </Button>
           </div>
         </div>
       ) : (
-        <div>
-          <MDEditor.Markdown
-            source={value}
-            style={{ whiteSpace: "pre-wrap" }}
-          />
-          <Button onClick={() => setShowEdit(true)}>
-            <Pen />
-            Edit
-          </Button>
+        <div className="space-y-4">
+          <MDEditor.Markdown source={editorValue} />
+          <div className="flex justify-end">
+            <Button
+              onClick={() => setShowEdit(true)}
+              variant="outline"
+              className="bg-transparent text-blue-500 hover:bg-blue-50"
+            >
+              <Pen className="mr-2" />
+              Edit
+            </Button>
+          </div>
         </div>
       )}
     </div>
