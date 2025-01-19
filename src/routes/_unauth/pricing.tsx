@@ -70,7 +70,7 @@ function RouteComponent() {
     setDialogOpen(true);
   };
 
-  const userQuery = useQuery({
+  const userQuery: any = useQuery({
     queryKey: AuthService.queryKeys.getUser(),
     queryFn: AuthService.getUser,
     staleTime: Infinity,
