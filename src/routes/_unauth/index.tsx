@@ -86,7 +86,7 @@ function RouteComponent() {
     <>
       <AuroraBackground className="min-h-[100dvh]">
         <div className="relative min-h-[100dvh] w-full overflow-x-hidden px-4 flex flex-col">
-          <div className="container w-full flex-grow flex flex-col md:flex-row items-center justify-center py-8 md:py-14">
+          <div className="container mx-auto w-full flex-grow flex flex-col md:flex-row items-center justify-center py-8 md:py-14">
             <div className="w-full md:w-1/2 flex flex-col items-center justify-center">
               <div className="text-center space-y-6">
                 <div className="w-auto flex items-center justify-center">
