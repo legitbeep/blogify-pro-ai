@@ -1,14 +1,11 @@
 import AuthService from "@/api/services/authService";
-import { FileUploader } from "@/components/atoms/file-uploader";
 import NotificationComponent from "@/components/atoms/notification";
-import FullScreenLock from "@/components/layout/full-screen-lock";
 import { MessageLoading } from "@/components/ui/message-loading";
 import { useToken } from "@/hooks/useToken";
 import {
   CONSTANTS,
   deleteKeyFromLocalStorage,
   getKeyFromLocalStorage,
-  setKeyInLocalStorage,
 } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
