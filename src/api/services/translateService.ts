@@ -13,10 +13,7 @@ interface TranslateDataRequest {
 
 class TranslateService {
   static async getTranslateData(data: TranslateDataRequest): Promise<any> {
-    return axios.post(
-      `${import.meta.env.VITE_TRANSLATE_BASE_URL}/translate`,
-      data
-    );
+    return axios.post(`${import.meta.env.VITE_API_BASE_URL}/translate`, data);
   }
 }
 
