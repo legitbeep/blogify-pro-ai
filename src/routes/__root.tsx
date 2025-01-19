@@ -1,6 +1,7 @@
 import AuthService from "@/api/services/authService";
 import NotificationComponent from "@/components/atoms/notification";
 import { MessageLoading } from "@/components/ui/message-loading";
+import { useSessionHandler } from "@/hooks/user-clerk-session";
 import { useToken } from "@/hooks/useToken";
 import {
   CONSTANTS,
@@ -20,7 +21,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   const tokenObj = useToken();
   const { user } = useUser();
-
+  useSessionHandler();
   const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
 
   const userQuery = useQuery({

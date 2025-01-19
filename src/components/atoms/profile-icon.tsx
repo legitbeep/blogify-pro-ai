@@ -1,15 +1,17 @@
 import AuthService from "@/api/services/authService";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import SigninButton from "./signin-button";
 import { useNavigate } from "@tanstack/react-router";
 import {
   SignedIn,
   SignedOut,
   SignInButton,
+  useClerk,
   UserButton,
 } from "@clerk/clerk-react";
 import { Button } from "../ui/button";
+import { CONSTANTS, deleteKeyFromLocalStorage } from "@/lib/utils";
 const sizeClasses = {
   sm: "w-8 h-8",
   md: "w-12 h-12",
@@ -18,18 +20,13 @@ const sizeClasses = {
 
 type sizeKey = keyof typeof sizeClasses;
 const ProfileIcon = ({ size = "md" }: { size?: sizeKey }) => {
+  const { session } = useClerk();
   const userQuery = useQuery({
     queryKey: AuthService.queryKeys.getUser(),
     queryFn: AuthService.getUser,
     staleTime: Infinity,
   });
   const navigate = useNavigate();
-
-  const onProfileClick = () => {
-    navigate({
-      to: "/dashboard/profile",
-    });
-  };
 
   if (userQuery?.isLoading)
     return (
@@ -75,7 +72,7 @@ const ProfileIcon = ({ size = "md" }: { size?: sizeKey }) => {
         </SignInButton>
       </SignedOut>
       <SignedIn>
-        <UserButton />
+        <UserButton afterSignOutUrl="/" />
       </SignedIn>
     </>
   );
