@@ -20,18 +20,16 @@ import {
 } from "@/components/ui/dialog";
 
 interface PublishDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   onAction: () => void;
-  isSuccess: boolean;
   isLoading?: boolean;
 }
 
 function PublishDialog({
-  isOpen,
-  onClose,
+  isOpen = true,
+  onClose = () => {},
   onAction,
-  isSuccess,
   isLoading,
 }: PublishDialogProps) {
   return (
@@ -42,9 +40,10 @@ function PublishDialog({
             <Newspaper className="w-6 h-6" />
             Publish Blog
           </DialogTitle>
-          <DialogDescription className="text-lg text-muted-foreground">
-            Publish your blog to make it available to your audience. NOTE : Once
-            the blog is published you wont be able to edit it!
+          <DialogDescription className="mt-4 mb-10 text-lg text-muted-foreground">
+            Publish your blog to make it available to your audience.
+            <br />
+            NOTE : Once the blog is published you wont be able to edit it!
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

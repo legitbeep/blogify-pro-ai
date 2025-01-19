@@ -24,7 +24,7 @@ export function FeaturesSectionWithCardGradient({
   const onBlogClick = (blog: BlogResponse) => {
     if (
       window.location.pathname?.includes("my-drafts") ||
-      (blog?.user_id == userQuery?.data?.id && !blog.is_blog)
+      (blog?.user_id == userQuery?.data?._id && !blog.is_blog)
     ) {
       navigate({
         to: `/blogs/${blog.id}/edit`,

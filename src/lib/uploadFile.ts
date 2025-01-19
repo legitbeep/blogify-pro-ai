@@ -63,13 +63,13 @@ export const uploadFile = async (
       await TranscriptService.getTranscriptData(transcriptData);
     setUploadStatus("Processing complete!");
 
-    const translateResponse = await TranslateService.getTranslateData({
-      text: transcriptResponse.response,
-      source_language_code: "en",
-      target_language_code: ["hi"],
-    });
+    // const translateResponse = await TranslateService.getTranslateData({
+    //   text: transcriptResponse.response,
+    //   source_language_code: "en",
+    //   target_language_codes: ["hi"],
+    // });
 
-    return translateResponse;
+    return transcriptResponse;
   } catch (error) {
     setUploadStatus("Upload or processing failed.");
     console.error(error);

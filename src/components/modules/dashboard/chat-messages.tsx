@@ -400,7 +400,7 @@ const ChatMessages = () => {
         user_type: "user",
         timestamp: new Date(),
         message_type: "TEXT",
-        user_id: userQuery.data?.id || "user",
+        user_id: userQuery.data?._id || "user",
       };
       setMessages((prev) => [...prev, newMessage]);
       setMessage("");
@@ -439,7 +439,7 @@ const ChatMessages = () => {
               timestamp: new Date(),
               message_type: "AUDIO",
               url: URL.createObjectURL(audioBlob),
-              user_id: userQuery.data?.id || "user",
+              user_id: userQuery.data?._id || "user",
             };
             setMessages((prev) => [...prev, newMessage]);
 

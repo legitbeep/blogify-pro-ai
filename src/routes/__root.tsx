@@ -36,7 +36,7 @@ function RootComponent() {
   if (!token && tokenObj?.isLoading) {
     // return full screen animated loader
     return (
-      <div className="w-100dvw h-dvh flex items-center justify-center bg-secondary">
+      <div className="w-100dvw h-dvh flex items-center justify-center ">
         <MessageLoading />
       </div>
     );

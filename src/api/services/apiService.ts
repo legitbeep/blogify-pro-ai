@@ -53,13 +53,8 @@ export const apiService = {
 
   async patch<T>(url: string, data: any) {
     try {
-      const token = getKeyFromLocalStorage(CONSTANTS.AUTH_TOKEN);
       const response = await api.patch<T>(url, {
         ...(data || {}),
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...(data?.headers || {}),
-        },
       });
       return response.data;
     } catch (error) {

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { apiService } from "./apiService";
 
 interface TranslateDataRequest {
@@ -6,15 +7,16 @@ interface TranslateDataRequest {
   target_language_codes: string[];
 }
 
-interface TranslateDataResponse {
-  response: string;
-}
+// interface TranslateDataResponse {
+//   response: any;
+// }
 
 class TranslateService {
-  static async getTranslateData(
-    data: TranslateDataRequest
-  ): Promise<TranslateDataResponse> {
-    return apiService.post("/translate", data);
+  static async getTranslateData(data: TranslateDataRequest): Promise<any> {
+    return axios.post(
+      `${import.meta.env.VITE_TRANSLATE_BASE_URL}/translate`,
+      data
+    );
   }
 }
 

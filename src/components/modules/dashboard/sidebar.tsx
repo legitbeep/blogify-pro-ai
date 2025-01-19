@@ -106,7 +106,7 @@ export function SidebarNav({ className, ...props }: SidebarNavProps) {
         </div>
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-2">
-        <LanguageDialog />
+        {/* <LanguageDialog /> */}
         <div className="flex items-center gap-2 p-4">
           <ProfileIcon size="sm" />
           <div className="flex flex-col">

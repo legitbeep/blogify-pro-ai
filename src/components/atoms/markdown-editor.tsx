@@ -1,21 +1,74 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button } from "../ui/button";
-import { Pen, Save } from "lucide-react";
+import { Loader2, Pen, Save } from "lucide-react";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import BlogService from "@/api/services/blogService";
+import { toast } from "sonner";
+import AuthService from "@/api/services/authService";
+import PublishDialog from "../modules/blogs/publish-dialog";
+import TranslateService from "@/api/services/translateService";
+import { CONSTANTS } from "@/lib/utils";
 
 interface MarkdownEditorProps {
-  value: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  initialValue?: string;
   hideEdit?: boolean;
+  blogData: any;
 }
 
 export default function MarkdownEditor({
-  value,
-  setValue,
   hideEdit,
+  initialValue,
+  blogData,
 }: MarkdownEditorProps) {
+  const { blogId } = useParams({ from: "/_auth/dashboard/$blogId/edit" });
+  const [loadingPublish, setLoadingPublish] = useState(false);
+  const navigate = useNavigate();
+  const updateBlogMutation = useMutation({
+    mutationFn: (translatedRes: any) =>
+      BlogService.updateBlog({
+        data: {
+          content: value,
+          ...(translatedRes
+            ? {
+                transcription: translatedRes,
+                is_blog: true,
+              }
+            : {}),
+        },
+        blog_id: blogId,
+      }),
+    onSuccess: (res, payload) => {
+      toast.success(payload ? "Blog Published!" : "Draft saved!");
+      if (payload) {
+        navigate({
+          to: "/",
+        });
+      }
+      setShowEdit(false);
+    },
+    onSettled: () => {
+      setLoadingPublish(false);
+    },
+  });
+
+  const userQuery = useQuery({
+    queryKey: AuthService.queryKeys.getUser(),
+    queryFn: AuthService.getUser,
+    staleTime: Infinity,
+  });
+
+  hideEdit = hideEdit || userQuery?.data?._id === blogData?.user_id;
+
+  const [value, setValue] = useState(initialValue);
   const [showEdit, setShowEdit] = useState(false);
   const [editorValue, setEditorValue] = useState(value);
+  const [showPublish, setShowPublish] = useState(false);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   const handleSave = () => {
     setValue(editorValue); // Save the changes to the parent state
@@ -30,6 +83,36 @@ export default function MarkdownEditor({
   const handleChange = (newValue?: string) => {
     if (newValue !== undefined) {
       setEditorValue(newValue); // Update the local editor state
+    }
+  };
+
+  const onPublish = () => {
+    setShowPublish(true);
+  };
+
+  const onConfirmPublish = async () => {
+    if (!editorValue) {
+      toast.error("Cannot publish an empty blog");
+      return;
+    }
+    setLoadingPublish(true);
+
+    try {
+      const translatedResponse = await TranslateService.getTranslateData({
+        text: editorValue ?? "",
+        source_language_code: "en",
+        target_language_codes: CONSTANTS.LANGUAGES.filter(
+          (l) => l.value !== "en"
+        )
+          .map((lang) => lang.value)
+          .slice(0, 3),
+      });
+      console.log({ translatedResponse });
+      await updateBlogMutation.mutate(translatedResponse?.data ?? []);
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      toast.error("Failed to save draft");
+      setLoadingPublish(false);
     }
   };
 
@@ -63,18 +146,28 @@ export default function MarkdownEditor({
         </div>
       ) : (
         <div className="space-y-4">
-          <MDEditor.Markdown source={editorValue} />
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-4">
+            {!showEdit &&
+              blogData?.user_id === userQuery?.data?._id &&
+              !blogData?.data?.is_blog && (
+                <Button className="" onClick={onPublish}>
+                  Publish
+                </Button>
+              )}
             <Button
               onClick={() => setShowEdit(true)}
               variant="outline"
-              className="bg-transparent text-blue-500 hover:bg-blue-50"
+              className="bg-transparent "
             >
               <Pen className="mr-2" />
               Edit
             </Button>
           </div>
+          <MDEditor.Markdown source={editorValue} />
         </div>
+      )}
+      {showPublish && (
+        <PublishDialog isLoading={loadingPublish} onAction={onConfirmPublish} />
       )}
     </div>
   );

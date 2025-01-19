@@ -1,4 +1,9 @@
 import { apiService } from "./apiService";
+interface BlogUpdateRequest {
+  data: any;
+  blog_id: string;
+}
+
 interface BlogRequest {
   content: string;
 }
@@ -40,10 +45,12 @@ class BlogService {
     return apiService.get(`/blog/${blogId}`);
   }
   static async createBlog(data: BlogRequest): Promise<string> {
-    return apiService.post("/blogs", data);
+    return apiService.post(`/blogs`, data);
   }
 
-  static async updateBlog(data: BlogRequest): Promise<{ result: boolean }> {
+  static async updateBlog(
+    data: BlogUpdateRequest
+  ): Promise<{ result: boolean }> {
     return apiService.patch("/blogs", data);
   }
   static queryKeys = {
