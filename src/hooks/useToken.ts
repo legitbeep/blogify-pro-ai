@@ -25,7 +25,8 @@ export const useToken = () => {
       if (!response.token) {
         throw new Error("Failed to fetch backend token");
       }
-      setKeyInLocalStorage(CONSTANTS.AUTH_TOKEN, response?.token || "");
+      if (response.token && response.token != "null")
+        setKeyInLocalStorage(CONSTANTS.AUTH_TOKEN, response.token);
       return response.token;
     } catch (err) {
       throw err;

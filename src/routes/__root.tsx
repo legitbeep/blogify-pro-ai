@@ -23,18 +23,15 @@ function RootComponent() {
     queryKey: AuthService.queryKeys.getUser(),
     queryFn: AuthService.getUser,
     staleTime: Infinity,
-    enabled: !!tokenObj.token,
+    enabled: !!tokenObj.token || !!token,
   });
 
   React.useEffect(() => {
     if (!!tokenObj.error) {
-      // show error notification
       toast.error("Failed to login!");
       console.log("Error", tokenObj.error);
     }
   }, [tokenObj.error]);
-
-  console.log({ tokenObj, token });
 
   if (!token && tokenObj?.isLoading) {
     // return full screen animated loader

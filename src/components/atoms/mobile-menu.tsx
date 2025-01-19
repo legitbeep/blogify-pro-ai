@@ -7,6 +7,7 @@ import { deleteCookie, login } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import AuthService from "@/api/services/authService";
 import { router } from "@/main";
+import { SignedIn } from "@clerk/clerk-react";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -17,7 +18,14 @@ export function MobileMenu() {
     staleTime: Infinity,
   });
 
-  let links = [{ label: "PRICING" }, { label: "GET STARTED" }];
+  let links = [
+    { label: "PRICING" },
+    { label: "GET STARTED" },
+    {
+      label: "MY DRAFTS",
+      isAuth: true,
+    },
+  ];
 
   if (!!userQuery?.data) {
     links = links.filter((link) => link.label !== "GET STARTED");
@@ -37,6 +45,11 @@ export function MobileMenu() {
       case "PROFILE":
         navigate({
           to: "/dashboard/profile",
+        });
+        break;
+      case "MY DRAFTS":
+        navigate({
+          to: "/dashboard/my-drafts",
         });
         break;
       case "LOGOUT":
@@ -68,15 +81,27 @@ export function MobileMenu() {
           </button>
         </div>
         <nav className="flex flex-col ">
-          {links.map((link) => (
-            <button
-              key={link.label}
-              onClick={() => onLinkClick(link)}
-              className="bg-transparent border-b text-left text-2xl py-4 hover:text-primary transition-colors max-w-full text-ellipsis overflow-hidden"
-            >
-              {link.label}
-            </button>
-          ))}
+          {links.map((link) =>
+            link.isAuth ? (
+              <SignedIn>
+                <button
+                  key={link.label}
+                  onClick={() => onLinkClick(link)}
+                  className="bg-transparent border-b text-left text-2xl py-4 hover:text-primary transition-colors max-w-full text-ellipsis overflow-hidden"
+                >
+                  {link.label}
+                </button>
+              </SignedIn>
+            ) : (
+              <button
+                key={link.label}
+                onClick={() => onLinkClick(link)}
+                className="bg-transparent border-b text-left text-2xl py-4 hover:text-primary transition-colors max-w-full text-ellipsis overflow-hidden"
+              >
+                {link.label}
+              </button>
+            )
+          )}
         </nav>
       </SheetContent>
     </Sheet>

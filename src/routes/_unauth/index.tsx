@@ -1,20 +1,12 @@
-import { useRazorpay } from "@/api/hooks/useRazorpay";
 import AuthService from "@/api/services/authService";
 
 // import useWebSocketDemo from "@/api/hooks/useWebSocketConnection";
-import PaymentService from "@/api/services/paymentService";
 import { FileUploader } from "@/components/atoms/file-uploader";
 import BlogListing from "@/components/modules/blogs/blogs-listing";
 
 // import GradientBackground from "@/components/atoms/gradient-bg";
 // import NotificationComponent from "@/components/atoms/notification";
-import ChatModal from "@/components/modules/chat-modal";
-import {
-  PurchaseDialog,
-  PurchaseDialogDemo,
-} from "@/components/modules/pricing/pricing-modal";
 import AnimatedGradientText from "@/components/ui/animated-gradient-text";
-import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
 // import { DefaultAreaChart } from "@/components/ui/graphs/area-graph/default";
@@ -28,12 +20,7 @@ import { cn, login } from "@/lib/utils";
 import { useThemeStore } from "@/store/useThemeStore";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  ArrowRightIcon,
-  ChevronRight,
-  Loader2,
-} from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_unauth/")({
@@ -59,10 +46,13 @@ const DUMMY_PAYMENT = {
 function RouteComponent() {
   const { theme } = useThemeStore();
   const [color, setColor] = React.useState(theme === "light" ? "#000" : "#fff");
-  const [orderLoading, setOrderLoading] = useState(false);
-  const [createPost, setCreatePost] = useState(false); // Controls FileUploader visibility
+  const [createPost, setCreatePost] = useState(false);
 
-  const razorpayObj = useRazorpay();
+  // const [orderLoading, setOrderLoading] = useState(false);
+  // const razorpayObj = useRazorpay();
+  // const { initiatePayment, isLoading } = razorpayObj;
+  // const [showChat, setShowChat] = useState(false);
+
   const navigate = useNavigate();
 
   const userQuery = useQuery({
@@ -70,7 +60,6 @@ function RouteComponent() {
     queryFn: AuthService.getUser,
     staleTime: Infinity,
   });
-
   useEffect(() => {
     setColor(theme === "light" ? "#000" : "#fff");
   }, [theme]);

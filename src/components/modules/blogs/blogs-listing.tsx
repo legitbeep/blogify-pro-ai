@@ -1,66 +1,62 @@
 import { Blog } from "@/types/blog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "./search-bar";
 import FilterBar from "./filter-bar";
 import BlogGrid from "./blog-grid";
 import { FeaturesSectionWithCardGradient } from "@/components/feature-section-with-card-gradient";
-
-const DUMMY_BLOGS: Blog[] = [
-  {
-    id: "1",
-    title: "Getting Started with React 18",
-    image: "/placeholder.svg?height=200&width=300",
-    tags: ["React", "JavaScript"],
-    createdAt: "2023-07-01",
-    author: {
-      name: "John Doe",
-      image: "/placeholder.svg?height=40&width=40",
-    },
-  },
-  {
-    id: "2",
-    title: "Advanced TypeScript Techniques",
-    image: "/placeholder.svg?height=200&width=300",
-    tags: ["TypeScript", "Programming"],
-    createdAt: "2023-07-05",
-    author: {
-      name: "Jane Smith",
-      image: "/placeholder.svg?height=40&width=40",
-    },
-  },
-  // Add more dummy blogs as needed
-];
+import { useQuery } from "@tanstack/react-query";
+import BlogService, { BlogResponse, TagType } from "@/api/services/blogService";
 
 export default function BlogListing() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<TagType[]>([]);
+  const [filteredBlogs, setFilteredBlogs] = useState<BlogResponse[]>([]);
+
+  const blogsQuery = useQuery({
+    queryKey: BlogService.queryKeys.getBlogs(),
+    queryFn: BlogService.getBlogs,
+  });
+
+  useEffect(() => {
+    if (blogsQuery.isSuccess) {
+      setFilteredBlogs(blogsQuery.data || []);
+    }
+  }, [blogsQuery.isSuccess]);
+
+  const filterBlogs = (tags: TagType[], searchTerm: string) => {
+    let filtered = blogsQuery.data?.filter((blog) => {
+      return tags.every((tag) => {
+        return blog.tags.some((blogTag) => blogTag?.value === tag.value);
+      });
+    });
+    filtered = filtered?.filter((blog) => {
+      return blog.title.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    setFilteredBlogs(filtered || []);
+  };
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+    filterBlogs(selectedTags, term);
   };
 
-  const handleTagFilter = (tags: string[]) => {
+  const handleFilter = (tags: TagType[]) => {
+    // filter blogs based on tags then if search exist filter them with search term
     setSelectedTags(tags);
+    filterBlogs(tags, searchTerm);
   };
-
-  const filteredBlogs = DUMMY_BLOGS.filter((blog) => {
-    const matchesSearch = blog.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesTags =
-      selectedTags.length === 0 ||
-      selectedTags.some((tag) => blog.tags.includes(tag));
-    return matchesSearch && matchesTags;
-  });
 
   return (
     <div className="container mx-auto px-4 py-8 bg-transparent max-w-7xl">
-      <h1 className="text-4xl font-bold mb-8 text-primary">Our Blog</h1>
+      <h1 className="text-3xl font-medium mb-8 text-primary">Recent Blogs</h1>
       <div className="mb-8 space-y-4 md:space-y-0 md:flex md:space-x-4 ">
         <SearchBar onSearch={handleSearch} />
-        <FilterBar onFilter={(val) => {}} />
+        <FilterBar onFilter={handleFilter} />
       </div>
-      <FeaturesSectionWithCardGradient />
+      <FeaturesSectionWithCardGradient
+        isLoading={blogsQuery.isLoading}
+        publicBlogs={filteredBlogs}
+      />
     </div>
   );
 }

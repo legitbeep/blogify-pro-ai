@@ -1,16 +1,20 @@
+import { MobileMenu } from "@/components/atoms/mobile-menu";
+import ProfileIcon from "@/components/atoms/profile-icon";
+import { ThemeToggle } from "@/components/atoms/theme-toggle";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { MobileMenu } from "./mobile-menu";
-import SigninButton from "./signin-button";
-import { ThemeToggle } from "./theme-toggle";
-import ProfileIcon from "./profile-icon";
-import LanguageDialog from "./language-dialog";
-import { SignedIn } from "@clerk/clerk-react";
-import { Button } from "../ui/button";
+import { ArrowLeft } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-export function Navbar() {
-  // const [isNewMessage, setIsNewMessage] = useState(false);
+const BlogNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -27,7 +31,6 @@ export function Navbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
   return (
     <header
       className={cn(
@@ -39,19 +42,22 @@ export function Navbar() {
     >
       <div className="flex h-14 items-center md:px-10 px-6">
         <div className="flex flex-1 items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-xl ">Blogify Pro</span>
-          </Link>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
 
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>My Drafts</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-
-            <div className="hidden md:flex space-x-4">
-              <SignedIn>
-                <Link to="/dashboard/my-drafts">
-                  <Button variant={"secondary"}>My Drafts</Button>
-                </Link>
-              </SignedIn>
+            {/* create web only visible div with flex items center spaxe-x-4 */}
+            <div className="hidden md:block">
               <ProfileIcon size="sm" />
             </div>
             <MobileMenu />
@@ -60,6 +66,6 @@ export function Navbar() {
       </div>
     </header>
   );
-}
+};
 
-export default Navbar;
+export default BlogNavbar;

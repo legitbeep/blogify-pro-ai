@@ -1,3 +1,4 @@
+import { TagType } from "@/api/services/blogService";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -54,24 +55,20 @@ const tags = [
 ];
 
 interface FilterBarProps {
-  onFilter: (tags: string[]) => void;
+  onFilter: (tags: TagType[]) => void;
 }
 
 export default function FilterBar({ onFilter }: FilterBarProps) {
   const [open, setOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<TagType[]>([]);
 
-  const handleSelect = (tag: string) => {
-    const updatedTags = selectedTags.includes(tag)
-      ? selectedTags.filter((t) => t !== tag)
+  const handleSelect = (tag: TagType) => {
+    const updatedTags = selectedTags.some((t) => t.value == tag.value)
+      ? selectedTags.filter((t) => t.value !== tag.value)
       : [...selectedTags, tag];
-
-    console.log({ tag, selectedTags, updatedTags });
     setSelectedTags(updatedTags);
     onFilter(updatedTags);
   };
-
-  console.log({ selectedTags });
 
   return (
     <Popover>
@@ -94,13 +91,15 @@ export default function FilterBar({ onFilter }: FilterBarProps) {
             {tags.map((tag) => (
               <Button
                 variant={
-                  selectedTags.includes(tag.value) ? "secondary" : "ghost"
+                  selectedTags.some((t) => t.value == tag.value)
+                    ? "secondary"
+                    : "ghost"
                 }
-                onClick={() => handleSelect(tag.value)}
+                onClick={() => handleSelect(tag)}
                 key={tag.value}
               >
                 <span>{tag?.label}</span>
-                {selectedTags.includes(tag.value) ? (
+                {selectedTags.some((t) => t.value == tag.value) ? (
                   <CircleCheck className="w-4 h-4 ml-auto" />
                 ) : (
                   <Circle className="w-4 h-4 ml-auto" />

@@ -4,164 +4,126 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Grid, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import BlogService from "@/api/services/blogService";
+import BlogService, { BlogResponse } from "@/api/services/blogService";
+import { useNavigate } from "@tanstack/react-router";
+import AuthService from "@/api/services/authService";
 
-// Extended type for blog features
-interface BlogFeature {
-  title: string;
-  description: string;
-  tags?: string[];
-  author?: {
-    name: string;
-    avatar: string;
-  };
-  createdAt?: string;
-  views?: number;
-  likes?: number;
-}
-
-export function FeaturesSectionWithCardGradient() {
-  const blogsQuery = useQuery({
-    queryKey: BlogService.queryKeys.getBlogs(),
-    queryFn: BlogService.getBlogs,
-    retry: 1,
+export function FeaturesSectionWithCardGradient({
+  publicBlogs,
+  isLoading = false,
+}: {
+  publicBlogs: BlogResponse[];
+  isLoading: boolean;
+}) {
+  const userQuery = useQuery({
+    queryKey: AuthService.queryKeys.getUser(),
+    queryFn: AuthService.getUser,
+    staleTime: Infinity,
   });
-  const publicBlogs: BlogFeature[] = [
-    {
-      title: "HIPAA and SOC2 Compliant",
-      description:
-        "Our applications are HIPAA and SOC2 compliant, your data is safe with us, always.",
-      tags: ["HIPAA", "SOC2"],
-      author: {
-        name: "John Doe",
-        avatar: "/api/placeholder/32/32",
-      },
-      createdAt: "2025-01-15",
-      views: 1234,
-      likes: 89,
-    },
-    {
-      title: "Automated Social Media Posting",
-      description:
-        "Schedule and automate your social media posts across multiple platforms to save time and maintain a consistent online presence.",
-      tags: ["Automation", "Social Media"],
-      author: {
-        name: "Jane Smith",
-        avatar: "/api/placeholder/32/32",
-      },
-      createdAt: "2025-01-14",
-      views: 2156,
-      likes: 167,
-    },
-    {
-      title: "Automated Social Media Posting",
-      description:
-        "Schedule and automate your social media posts across multiple platforms to save time and maintain a consistent online presence.",
-      tags: ["Automation", "Social Media"],
-      author: {
-        name: "Jane Smith",
-        avatar: "/api/placeholder/32/32",
-      },
-      createdAt: "2025-01-14",
-      views: 2156,
-      likes: 167,
-    },
-    {
-      title: "Automated Social Media Posting",
-      description:
-        "Schedule and automate your social media posts across multiple platforms to save time and maintain a consistent online presence.",
-      tags: ["Automation", "Social Media"],
-      author: {
-        name: "Jane Smith",
-        avatar: "/api/placeholder/32/32",
-      },
-      createdAt: "2025-01-14",
-      views: 2156,
-      likes: 167,
-    },
-    // ... other blog items with similar structure
-  ];
-
-  const onBlogClick = (blog: BlogFeature) => {
-    // Navigate to the blog post page
+  const navigate = useNavigate();
+  const onBlogClick = (blog: BlogResponse) => {
+    if (
+      window.location.pathname?.includes("my-drafts") ||
+      (blog?.user_id == userQuery?.data?.id && !blog.is_blog)
+    ) {
+      navigate({
+        to: `/blogs/${blog.id}/edit`,
+      });
+    } else {
+      navigate({
+        to: `/blogs/${blog.id}`,
+      });
+    }
   };
 
   return (
     <div className="px-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-4 max-w-7xl mx-auto">
-        {blogsQuery.isLoading
-          ? Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="animate-pulse bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-6 rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-500"
-              >
-                <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-24 w-full rounded-lg mb-4"></div>
-                <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-1/2 rounded-lg mb-2"></div>
-                <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-3/4 rounded-lg mb-2"></div>
-                <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-1/2 rounded-lg mb-2"></div>
-                <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-3/4 rounded-lg mb-2"></div>
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="animate-pulse bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-6 rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-500"
+            >
+              <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-24 w-full rounded-lg mb-4"></div>
+              <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-1/2 rounded-lg mb-2"></div>
+              <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-3/4 rounded-lg mb-2"></div>
+              <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-1/2 rounded-lg mb-2"></div>
+              <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-4 w-3/4 rounded-lg mb-2"></div>
+            </div>
+          ))
+        ) : !!publicBlogs?.length ? (
+          publicBlogs.map((feature) => (
+            <div
+              key={feature.title}
+              onClick={() => onBlogClick(feature)}
+              className="relative cursor-pointer bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-6 rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-500"
+            >
+              <Grid size={20} />
+
+              {/* Title and Description */}
+              <p className="text-base font-bold text-neutral-800 dark:text-white relative z-20">
+                {feature.title}
+              </p>
+
+              <p className="text-neutral-600 dark:text-neutral-400 mt-2 text-sm font-normal relative z-20">
+                {feature.content?.slice(0, 50)}...
+              </p>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mb-4 mt-2 relative z-20">
+                {feature.tags?.map((tag) => (
+                  <Badge
+                    key={tag?.value}
+                    variant="secondary"
+                    className="text-xs"
+                  >
+                    {tag?.label}
+                  </Badge>
+                ))}
               </div>
-            ))
-          : publicBlogs.map((feature) => (
-              <div
-                key={feature.title}
-                onClick={() => onBlogClick(feature)}
-                className="relative cursor-pointer bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-6 rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-500"
-              >
-                <Grid size={20} />
-
-                {/* Title and Description */}
-                <p className="text-base font-bold text-neutral-800 dark:text-white relative z-20">
-                  {feature.title}
-                </p>
-
-                <p className="text-neutral-600 dark:text-neutral-400 mt-2 text-sm font-normal relative z-20">
-                  {feature.description?.slice(0, 50)}...
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 mb-4 mt-2 relative z-20">
-                  {feature.tags?.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                {/* Author and Date */}
-                <div className="flex items-center mt-auto space-x-2 relative z-20">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={feature.author?.avatar} />
-                    <AvatarFallback>
-                      {feature.author?.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-                      {feature.author?.name}
-                    </span>
-                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                      {new Date(feature.createdAt || "").toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Engagement Metrics */}
-                <div className="flex items-center justify-end mt-4 space-x-4 relative z-20">
-                  <div className="flex items-center space-x-1">
-                    <Eye className="h-4 w-4 text-neutral-500" />
-                    <span className="text-xs text-neutral-500">
-                      {feature.views?.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Heart className="h-4 w-4 text-neutral-500" />
-                    <span className="text-xs text-neutral-500">
-                      {feature.likes?.toLocaleString()}
-                    </span>
-                  </div>
+              {/* Author and Date */}
+              <div className="flex items-center mt-auto space-x-2 relative z-20">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={feature.user?.picture} />
+                  <AvatarFallback>
+                    {feature.user?.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                    {feature.user?.name}
+                  </span>
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {new Date(feature.timestamp || "").toLocaleDateString()}
+                  </span>
                 </div>
               </div>
-            ))}
+
+              {/* Engagement Metrics */}
+              <div className="flex items-center justify-end mt-4 space-x-4 relative z-20">
+                <div className="flex items-center space-x-1">
+                  <Eye className="h-4 w-4 text-neutral-500" />
+                  <span className="text-xs text-neutral-500">
+                    {feature.views?.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Heart className="h-4 w-4 text-neutral-500" />
+                  <span className="text-xs text-neutral-500">
+                    {feature.likes?.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <p className="text-lg text-neutral-500 dark:text-neutral-400">
+              No Blogs Found
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

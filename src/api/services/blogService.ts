@@ -3,12 +3,38 @@ interface BlogRequest {
   content: string;
 }
 
-interface BlogResponse {
-  response: string;
+export interface TagType {
+  value: string;
+  label: string;
+}
+
+export interface BlogResponse {
+  id: string;
+  audio_file_url?: string;
+  views: number;
+  content: string;
+  is_blog: boolean;
+  likes: number;
+  title: string;
+  tags: Array<TagType>;
+  timestamp: string;
+  transcripts: any;
+  user: {
+    id: string;
+    email: string;
+    firebase_token: string;
+    name: string;
+    picture: string;
+    post_remaining: number;
+  };
+  user_id: string;
 }
 class BlogService {
-  static async getBlogs() {
-    return apiService.get("/list");
+  static async getBlogs(): Promise<BlogResponse[]> {
+    return apiService.get("/blogs");
+  }
+  static async getDrafts(): Promise<BlogResponse[]> {
+    return apiService.get("/drafts");
   }
   static async getBlogByID(blogId: string) {
     return apiService.get(`/blog/${blogId}`);
@@ -22,6 +48,7 @@ class BlogService {
       this.queryKeys.index,
       JSON.stringify(params),
     ],
+    getDrafts: (params?: any) => [this.queryKeys.index, JSON.stringify(params)],
     getBlogs: (params?: any) => [this.queryKeys.index, JSON.stringify(params)],
   };
 }

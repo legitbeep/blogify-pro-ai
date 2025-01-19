@@ -72,8 +72,11 @@ export function AudioUploader({ onUploadComplete }: AudioUploaderProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between">
-        <Button onClick={isRecording ? stopRecording : startRecording}>
+      <div className="flex flex-col space-y-4">
+        <Button
+          className="w-full"
+          onClick={isRecording ? stopRecording : startRecording}
+        >
           {isRecording ? "Stop Recording" : "Start Recording"}
         </Button>
         <input
@@ -83,7 +86,7 @@ export function AudioUploader({ onUploadComplete }: AudioUploaderProps) {
           className="hidden"
           id="audio-upload"
         />
-        <Button asChild>
+        <Button asChild className="w-full">
           <label htmlFor="audio-upload">Upload Audio</label>
         </Button>
       </div>
