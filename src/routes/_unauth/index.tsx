@@ -22,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_unauth/")({
   component: RouteComponent,
@@ -66,7 +67,12 @@ function RouteComponent() {
 
   const onGetStarted = () => {
     if (!!userQuery?.data) {
-      setCreatePost(true); // Open FileUploader
+      if (userQuery?.data?.post_remaining == 0) {
+        toast.error("Your AI usage limit has been reached, purchase more!");
+        navigate({
+          to: "/pricing",
+        });
+      } else setCreatePost(true); // Open FileUploader
     } else {
       login();
     }

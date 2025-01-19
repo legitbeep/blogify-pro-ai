@@ -21,6 +21,7 @@ import { Route as AuthDashboardMyDraftsImport } from './routes/_auth/dashboard/m
 import { Route as AuthDashboardAnalyticsImport } from './routes/_auth/dashboard/analytics'
 import { Route as AuthDashboardChatChatIdImport } from './routes/_auth/dashboard/chat/$chatId'
 import { Route as AuthDashboardBlogIdEditImport } from './routes/_auth/dashboard/$blogId.edit'
+import { Route as AuthDashboardBlogIdBlogSlugLangImport } from './routes/_auth/dashboard/$blogId.$blogSlug.$lang'
 
 // Create/Update Routes
 
@@ -81,6 +82,13 @@ const AuthDashboardBlogIdEditRoute = AuthDashboardBlogIdEditImport.update({
   path: '/dashboard/$blogId/edit',
   getParentRoute: () => AuthRoute,
 } as any)
+
+const AuthDashboardBlogIdBlogSlugLangRoute =
+  AuthDashboardBlogIdBlogSlugLangImport.update({
+    id: '/dashboard/$blogId/$blogSlug/$lang',
+    path: '/dashboard/$blogId/$blogSlug/$lang',
+    getParentRoute: () => AuthRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -156,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardChatChatIdImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/dashboard/$blogId/$blogSlug/$lang': {
+      id: '/_auth/dashboard/$blogId/$blogSlug/$lang'
+      path: '/dashboard/$blogId/$blogSlug/$lang'
+      fullPath: '/dashboard/$blogId/$blogSlug/$lang'
+      preLoaderRoute: typeof AuthDashboardBlogIdBlogSlugLangImport
+      parentRoute: typeof AuthImport
+    }
   }
 }
 
@@ -168,6 +183,7 @@ interface AuthRouteChildren {
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
   AuthDashboardBlogIdEditRoute: typeof AuthDashboardBlogIdEditRoute
   AuthDashboardChatChatIdRoute: typeof AuthDashboardChatChatIdRoute
+  AuthDashboardBlogIdBlogSlugLangRoute: typeof AuthDashboardBlogIdBlogSlugLangRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -177,6 +193,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
   AuthDashboardBlogIdEditRoute: AuthDashboardBlogIdEditRoute,
   AuthDashboardChatChatIdRoute: AuthDashboardChatChatIdRoute,
+  AuthDashboardBlogIdBlogSlugLangRoute: AuthDashboardBlogIdBlogSlugLangRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -204,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthDashboardIndexRoute
   '/dashboard/$blogId/edit': typeof AuthDashboardBlogIdEditRoute
   '/dashboard/chat/$chatId': typeof AuthDashboardChatChatIdRoute
+  '/dashboard/$blogId/$blogSlug/$lang': typeof AuthDashboardBlogIdBlogSlugLangRoute
 }
 
 export interface FileRoutesByTo {
@@ -216,6 +234,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthDashboardIndexRoute
   '/dashboard/$blogId/edit': typeof AuthDashboardBlogIdEditRoute
   '/dashboard/chat/$chatId': typeof AuthDashboardChatChatIdRoute
+  '/dashboard/$blogId/$blogSlug/$lang': typeof AuthDashboardBlogIdBlogSlugLangRoute
 }
 
 export interface FileRoutesById {
@@ -230,6 +249,7 @@ export interface FileRoutesById {
   '/_auth/dashboard/': typeof AuthDashboardIndexRoute
   '/_auth/dashboard/$blogId/edit': typeof AuthDashboardBlogIdEditRoute
   '/_auth/dashboard/chat/$chatId': typeof AuthDashboardChatChatIdRoute
+  '/_auth/dashboard/$blogId/$blogSlug/$lang': typeof AuthDashboardBlogIdBlogSlugLangRoute
 }
 
 export interface FileRouteTypes {
@@ -244,6 +264,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/$blogId/edit'
     | '/dashboard/chat/$chatId'
+    | '/dashboard/$blogId/$blogSlug/$lang'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -255,6 +276,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/$blogId/edit'
     | '/dashboard/chat/$chatId'
+    | '/dashboard/$blogId/$blogSlug/$lang'
   id:
     | '__root__'
     | '/_auth'
@@ -267,6 +289,7 @@ export interface FileRouteTypes {
     | '/_auth/dashboard/'
     | '/_auth/dashboard/$blogId/edit'
     | '/_auth/dashboard/chat/$chatId'
+    | '/_auth/dashboard/$blogId/$blogSlug/$lang'
   fileRoutesById: FileRoutesById
 }
 
@@ -302,7 +325,8 @@ export const routeTree = rootRoute
         "/_auth/dashboard/profile",
         "/_auth/dashboard/",
         "/_auth/dashboard/$blogId/edit",
-        "/_auth/dashboard/chat/$chatId"
+        "/_auth/dashboard/chat/$chatId",
+        "/_auth/dashboard/$blogId/$blogSlug/$lang"
       ]
     },
     "/_unauth": {
@@ -342,6 +366,10 @@ export const routeTree = rootRoute
     },
     "/_auth/dashboard/chat/$chatId": {
       "filePath": "_auth/dashboard/chat/$chatId.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/dashboard/$blogId/$blogSlug/$lang": {
+      "filePath": "_auth/dashboard/$blogId.$blogSlug.$lang.tsx",
       "parent": "/_auth"
     }
   }

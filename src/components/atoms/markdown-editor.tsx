@@ -6,11 +6,13 @@ import { Pen, Save } from "lucide-react";
 interface MarkdownEditorProps {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
+  hideEdit?: boolean;
 }
 
 export default function MarkdownEditor({
   value,
   setValue,
+  hideEdit,
 }: MarkdownEditorProps) {
   const [showEdit, setShowEdit] = useState(false);
   const [editorValue, setEditorValue] = useState(value);
@@ -33,7 +35,7 @@ export default function MarkdownEditor({
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
-      {showEdit ? (
+      {showEdit && !hideEdit ? (
         <div className="space-y-4">
           <MDEditor
             value={editorValue}

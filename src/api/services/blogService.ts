@@ -36,11 +36,15 @@ class BlogService {
   static async getDrafts(): Promise<BlogResponse[]> {
     return apiService.get("/drafts");
   }
-  static async getBlogByID(blogId: string) {
+  static async getBlogByID(blogId: string): Promise<BlogResponse> {
     return apiService.get(`/blog/${blogId}`);
   }
   static async createBlog(data: BlogRequest): Promise<string> {
     return apiService.post("/blogs", data);
+  }
+
+  static async updateBlog(data: BlogRequest): Promise<{ result: boolean }> {
+    return apiService.patch("/blogs", data);
   }
   static queryKeys = {
     index: "Blog Service",
@@ -48,8 +52,21 @@ class BlogService {
       this.queryKeys.index,
       JSON.stringify(params),
     ],
-    getDrafts: (params?: any) => [this.queryKeys.index, JSON.stringify(params)],
-    getBlogs: (params?: any) => [this.queryKeys.index, JSON.stringify(params)],
+    updateBlog: (params?: any) => [
+      this.queryKeys.index,
+      "update-blog",
+      JSON.stringify(params),
+    ],
+    getDrafts: (params?: any) => [
+      this.queryKeys.index,
+      "get-draft",
+      JSON.stringify(params),
+    ],
+    getBlogs: (params?: any) => [
+      this.queryKeys.index,
+      "get-blogs",
+      JSON.stringify(params),
+    ],
   };
 }
 
